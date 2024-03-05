@@ -135,7 +135,19 @@ Finally, we can obtain the SuSiE results using:
 ```
 step3.res <- mvmr.cml.susie.step3(step2.res$mvdat, step2.res$invalid.idx, step2.res$theta.vec, rho.mat)
 ```
-which resembles that of a SuSiE output. The key is that
+which resembles that of a SuSiE output. The most relevant output is 10 x 43 posterior inclusion probability (PIP) matrix, where 10 is the number of assumed signal clusters in SuSiE (default). Below shows six rows and columns of this 10 x 43 PIP matrix:
+```
+head(step3.res$alpha)
+     met-d-ApoA1 met-d-ApoB_by_ApoA1   met-d-Gln met-d-GlycA  met-d-IDL_C met-d-IDL_CE
+[1,] 0.001298447         0.001179607 0.949821743 0.004922351 0.0007830185  0.000784462
+[2,] 0.005830548         0.048773557 0.002128769 0.002302330 0.0028553836  0.002940338
+[3,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140  0.023255814
+[4,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140  0.023255814
+[5,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140  0.023255814
+[6,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140  0.023255814
+```
+noticing that Gln (glutamine) has 0.949821743 (95.0%) PIP for the first signal cluster.
+The key is that
 
 # TLDR
 
