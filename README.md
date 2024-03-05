@@ -146,12 +146,19 @@ head(step3.res$alpha)
 [5,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140  0.023255814
 [6,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140  0.023255814
 ```
-Note that Gln (glutamine) has 0.949821743 (95.0%) PIP for the first signal cluster. We notice there are no clear signal from a cluster (e.g., cluster 3), SuSiE assigns a uniform probability to all exposures, in this case, 0.023255814 = 1/43. Thus, we can utilize the following code:
+Note that Gln (glutamine) has 0.949821743 (95.0%) PIP for the first signal cluster. We noticed when there are no clear signal (likely due to overspecification on the number of clusters) from an assumed cluster (i.e., cluster 3 to 10), SuSiE assigns a uniform probability to all exposures, in this case, 0.023255814 = 1/43. Thus, we can utilize the following code:
 ```
 sort(unique(which(step3.res$alpha > 1/43, arr.ind = TRUE)[,1]))
 [1] 1 2
 ```
-to find out there are in total 2 signal clusters.
+to find out there are in total 2 signal clusters. Nonetheless, SuSiE is robust to the overspecification of the number of signal clusters<sup>[5]</sup>. If we re-run step 3 by assuming 2 clusters, we still get pretty much the same results:
+```
+step3.res.v2 <- mvmr.cml.susie.step3(step2.res$mvdat, step2.res$invalid.idx, step2.res$theta.vec, rho.mat, 2)
+head(step3.res.v2$alpha)
+     met-d-ApoA1 met-d-ApoB_by_ApoA1   met-d-Gln met-d-GlycA  met-d-IDL_C met-d-IDL_CE
+[1,] 0.001298322         0.001179427 0.949826388 0.004922565 0.0007829557  0.000784398
+[2,] 0.005830416         0.048773571 0.002128685 0.002302252 0.0028553024  0.002940255
+```
 
 # TLDR
 
@@ -166,3 +173,5 @@ Step 1 of MVMR-cML-SuSiE narrows down the set of promising metabolites from 249 
 [3] Bellenguez, Céline, et al. "New insights into the genetic etiology of Alzheimer’s disease and related dementias." Nature genetics 54.4 (2022): 412-436.
 
 [4] Bulik-Sullivan, Brendan, et al. "An atlas of genetic correlations across human diseases and traits." Nature genetics 47.11 (2015): 1236-1241.
+
+[5] Wang, Gao, et al. "A simple new approach to variable selection in regression, with application to genetic fine mapping." Journal of the Royal Statistical Society Series B: Statistical Methodology 82.5 (2020): 1273-1300.
