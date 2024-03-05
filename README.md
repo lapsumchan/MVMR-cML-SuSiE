@@ -11,7 +11,7 @@ This repository provides a demonstration on how to use the MVMR-cML-SuSiE `R` so
 
 The source code has been tested on Microsoft's Windows 10 operating system and Linux (Ubuntu 18.04). The source code should be compatible with Windows, Mac, and Linux operating systems.
 
-Before using the DrFARM source code, users should have `R` version 4.3.0 or higher, and several packages installed.
+Before using the MVMR-cML-SuSiE source code, users should have `R` version 4.3.0 or higher, and several packages installed.
 
 ### Installation  
 
