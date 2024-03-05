@@ -160,9 +160,25 @@ head(step3.res.v2$alpha)
 [2,] 0.005830416         0.048773571 0.002128685 0.002302252 0.0028553024  0.002940255
 ```
 
-# TLDR
+With this, we can identify the exposures associated with each signal cluster:
+```
+which(step3.res$alpha[1,] > 1/43)
+met-d-Gln 
+        3 
 
-Step 1 of MVMR-cML-SuSiE narrows down the set of promising metabolites from 249 to 43 after applying Bonferroni correcction. The harmonized data for MVMR analysis is stored in `mvdat`, while the UVMR-estimates for the 43 exposures and the list of invalid IVs (their corresponding indices) identified in step 2 are stored in `theta.vec` and `invalid.idx` of the `step2.res` list, respectively.
+> which(step3.res$alpha[2,] > 1/43)
+met-d-ApoB_by_ApoA1       met-d-L_LDL_P     met-d-M_VLDL_FC      met-d-M_VLDL_P 
+                  2                   9                  18                  19 
+    met-d-M_VLDL_PL       met-d-S_LDL_P      met-d-S_VLDL_C     met-d-S_VLDL_CE 
+                 20                  22                  23                  24 
+    met-d-S_VLDL_FC      met-d-S_VLDL_L      met-d-S_VLDL_P     met-d-S_VLDL_PL 
+                 25                  26                  27                  28 
+       met-d-VLDL_C       met-d-VLDL_CE        met-d-VLDL_P     met-d-XS_VLDL_L 
+                 29                  30                  31                  36 
+    met-d-XS_VLDL_P    met-d-XS_VLDL_PL 
+                 37                  38 
+```
+and re-run MVMR-cML using a submodel. Using 
 
 ### References
 
