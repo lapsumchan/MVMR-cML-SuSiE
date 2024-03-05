@@ -108,14 +108,16 @@ and this step should complete within half an hour on a standard computer. Noneth
 step2.res <- readRDS("step2res.RDS")
 ```
 
-This step provides the OpenGWAS harmonized data needed for multivariable Mendelian randomization (MVMR) stored in `step2.res$mvdat`, of which the matrix associated with the exposure has dimension 203 x 43:
+This step provides the OpenGWAS harmonized data needed for multivariable Mendelian randomization (MVMR) stored in `step2.res$mvdat`, of which the matrix associated with the exposure has dimension 187 x 43:
 ```
 dim(step2.res$mvdat$exposure_beta)
+[1] 187  43
 ```
 
 Moreover, the indices of invalid IVs which are stored in `step2.res$invalid.idx`:
 ```
 step2.res$invalid.idx
+[1]  11  28  62  83  89  91  99 122 131 144
 ```
 
 In addition, the initial estimates for exposures used for iterative SuSiE algorithm in step 3 are stored in `step2.res$theta.vec`.
