@@ -181,7 +181,7 @@ met-d-ApoB_by_ApoA1       met-d-L_LDL_P     met-d-M_VLDL_FC      met-d-M_VLDL_P
 and re-run MVMR-cML for all submodels. Using `met-d-Gln` and `met-d-ApoB_by_ApoA1` as an example:
 
 ```
-exposure.dat.sub1 <- mv_extract_exposures(c("`met-d-Gln", "met-d-ApoB_by_ApoA1"))
+exposure.dat.sub1 <- mv_extract_exposures(c("met-d-Gln", "met-d-ApoB_by_ApoA1"))
 outcome.dat.sub1 <- extract_outcome_data(snps=exposure.dat.sub1$SNP, outcomes = outcome.id)
 mvdat.sub1 <- mv_harmonise_data(exposure.dat.sub1, outcome.dat.sub1)
 
@@ -209,6 +209,7 @@ MVcML.BIC.SE.sub1 <- MVcML_SdTheta(b_exp = mvdat.sub1$exposure_beta,
                               zero_ind = setdiff(1:length(mvdat.sub1$outcome_beta), MVcML_res$BIC_invalid))
 
 MVcMLBIC.pval.sub1 <- pnorm(-abs(MVcML.res.sub1$BIC_theta/MVcML_BIC_SE))*2
+```
 
 ### References
 
