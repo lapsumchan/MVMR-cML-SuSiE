@@ -15,7 +15,7 @@ Before using the DrFARM source code, users should have `R` version 4.3.0 or high
 
 ### Installation  
 
-First, we need to install a few dependencies `TwoSampleMR`, `susieR`, `MRcML` and `MVMRcML`:  
+First, we need to install a few dependencies [`TwoSampleMR`](https://mrcieu.github.io/TwoSampleMR/), [`susieR`](https://github.com/stephenslab/susieR), [`MRcML`](https://github.com/xue-hr/MRcML) and [`MVMRcML`](https://github.com/ZhaotongL/MVMR-cML):  
 
     install.packages("remotes")
     remotes::install_github("MRCIEU/TwoSampleMR")
@@ -26,7 +26,7 @@ First, we need to install a few dependencies `TwoSampleMR`, `susieR`, `MRcML` an
     devtools::install_github("xue-hr/MRcML")
     devtools::install_github("ZhaotongL/MVMR-cML")
     
-which should install within a couple of minutes on a standard machine. Please refer to the corresponding Github for help if the `R` package cannot be installed properly.
+which should install within a couple of minutes on a standard machine. Please refer to the hyperlinked Github pages for help if the corresponding `R` packages cannot be installed properly.
 
 # Demo
 
