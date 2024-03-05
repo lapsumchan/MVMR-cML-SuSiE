@@ -3,26 +3,29 @@ mvmr.cml.susie.step1 <- function(exposure.ids, outcome.id, sample.sizes) {
   L <- length(exposure.ids)
   pval.vec <- rep(NA, L)
   
-  # Get instruments
-  exposure.dat <- extract_instruments(exposure.ids[i])
-  
-  # Get effects of instruments on outcome
-  outcome.dat <- extract_outcome_data(snps=exposure.dat$SNP, outcomes = outcome.id)
-  
-  # Harmonise the exposure and outcome data
-  dat <- harmonise_data(exposure.dat, outcome.dat)
-  
-  n <- min(sample_sizes[i], outcome.dat$samplesize.outcome)
-  
-  # Perform UVMR-cML
-  cML.result <- mr_cML(dat$beta.exposure,
-                       dat$beta.outcome,
-                       dat$se.exposure,
-                       dat$se.outcome,
-                       n = n,
-                       random_start = 100,
-                       random_seed = 1)
-  pval.vec[i] <- cML.result$MA_BIC_p
+  for (i in 1:L) {
+    print(i)
+    # Get instruments
+    exposure.dat <- extract_instruments(exposure.ids[i])
+    
+    # Get effects of instruments on outcome
+    outcome.dat <- extract_outcome_data(snps=exposure.dat$SNP, outcomes = outcome.id)
+    
+    # Harmonise the exposure and outcome data
+    dat <- harmonise_data(exposure.dat, outcome.dat)
+    
+    n <- min(sample_sizes[i], outcome.dat$samplesize.outcome)
+    
+    # Perform UVMR-cML
+    cML.result <- mr_cML(dat$beta.exposure,
+                         dat$beta.outcome,
+                         dat$se.exposure,
+                         dat$se.outcome,
+                         n = n,
+                         random_start = 100,
+                         random_seed = 1)
+    pval.vec[i] <- cML.result$MA_BIC_p
+  }
   return(pval.vec)
 }
 
