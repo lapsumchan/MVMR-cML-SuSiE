@@ -135,7 +135,7 @@ Finally, we can obtain the SuSiE results using:
 ```
 step3.res <- mvmr.cml.susie.step3(step2.res$mvdat, step2.res$invalid.idx, step2.res$theta.vec, rho.mat)
 ```
-which resembles that of a SuSiE output. The most relevant output is 10 x 43 posterior inclusion probability (PIP) matrix, where 10 is the number of assumed signal clusters in SuSiE (default). Below shows six rows and columns of this 10 x 43 PIP matrix:
+which resembles that of a SuSiE output. The most relevant output is the 10 x 43 posterior inclusion probability (PIP) matrix, where 10 is the number of assumed signal clusters in SuSiE (default). Below shows six rows and columns of this 10 x 43 PIP matrix:
 ```
 head(step3.res$alpha)
      met-d-ApoA1 met-d-ApoB_by_ApoA1   met-d-Gln met-d-GlycA  met-d-IDL_C met-d-IDL_CE
@@ -146,8 +146,12 @@ head(step3.res$alpha)
 [5,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140  0.023255814
 [6,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140  0.023255814
 ```
-noticing that Gln (glutamine) has 0.949821743 (95.0%) PIP for the first signal cluster.
-The key is that
+Note that Gln (glutamine) has 0.949821743 (95.0%) PIP for the first signal cluster. We notice there are no clear signal from a cluster (e.g., cluster 3), SuSiE assigns a uniform probability to all exposures, in this case, 0.023255814 = 1/43. Thus, we can utilize the following code:
+```
+sort(unique(which(step3.res$alpha > 1/43, arr.ind = TRUE)[,1]))
+[1] 1 2
+```
+to find out there are in total 2 signal clusters.
 
 # TLDR
 
