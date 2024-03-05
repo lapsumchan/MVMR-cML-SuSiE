@@ -63,10 +63,10 @@ outcome.id <- "ebi-a-GCST90027158"
 We also need to prepare a vector of sample sizes corresponding to each exposures in `sample.sizes`. However, only the minimum sample size amongst GWASs (exposure + outcome) will be used for cML. Thus for illustrative purpose, it suffice to set:
 
 ```
-sample.sizes <- 85934
+sample.sizes <- rep(85934, 249)
 ```
 
-which is the minimum sample size coming from the outcome AD (but not exposure).
+where 85934 is the minimum sample size coming from the outcome AD (but not exposure).
 
 With the above three `R` objects, we are ready to run step 1 of MVMR-cML-SuSiE, which provides a vector of *p*-values for all 249 metabolite exposures:
 
@@ -92,11 +92,15 @@ exposure.ids.subset <- exposure.ids[subset.idx]
 ```
 which is stored in `exposure.ids.subset` and will be used in step 2 of MVMR-cML-SuSiE. In this case, we used a Bonferroni correction cutoff of `0.05 / 27`, where 27 corresponds to the number of principal components (PCs) explaining 95% variability of the metabolite. This gives us 43 metabolite exposures remaining to work with. Notice the cutoff being used is study-specific and should be varied accordingly.
 
-Similar to step 1, we need the exposure IDs (`exposure.ids.subset`), in this case, a vector containing 43 `met-d` IDs, `outcome.id` and `sample.sizes.subset` (which should be same length as `exposure.ids.subset` corresponding to their sample sizes). Nonetheless for simplicity, we use `sample.sizes` for the third argument again as it contains the minimum sample size.
+Similar to step 1, we need the exposure IDs (`exposure.ids.subset`), in this case, a vector containing 43 `met-d` IDs, `outcome.id` and `sample.sizes.subset` (which should be same length as `exposure.ids.subset` corresponding to their sample sizes). Nonetheless for simplicity, we use
 ```
+sample.sizes.subset <- rep(85934, 43)
+```
+again, as it contains the minimum sample size.
 step2.res <- mvmr.cml.susie.step2(exposure.ids.subset, outcome.id, sample.sizes)
 ```
 
+This step provides 
 # TLDR
 
 Step 1 of MVMR-cML-SuSiE narrows down the set of promising metabolites from 249 to 43 after applying Bonferroni correcction. The harmonized data for multivariable MR analysis is stored in `mvdat`, while the UVMR-estimates for the 43 exposures and the list of invalid IVs identified in step 2 are stored in `invalid.idx` and `theta.vec` of the `step2.res` list, respectively.
