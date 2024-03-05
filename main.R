@@ -51,8 +51,9 @@ mvmr.cml.susie.step2 <- function(exposure.ids.subset, outcome.id, sample.sizes.s
   
   pval.vec <- rep(NA, L.star)
   theta.vec <- rep(NA, L.star)
+  uvmr.invalid.ls <- list()
+  
   for (i in 1:L.star) {
-    
     n <- min(sample.sizes.subset[i], outcome.dat$samplesize.outcome)
     
     # Perform UVMR-cML
