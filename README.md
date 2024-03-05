@@ -127,7 +127,7 @@ rho.mat <- matrix(0, 250, 250)
 rho.mat[1:249,1:249] <- readRDS("metdrho.RDS")
 rho.mat[250,250] <- 1
 ```
-Notice we need to subset the indices accordingly:
+Notice we need to subset the indices accordingly to obtain the 44 x 44 matrix:
 ```
 rho.mat <- rho.mat[c(subset.idx,250),c(subset.idx,250)]
 ```
@@ -135,6 +135,8 @@ Finally, we can obtain the SuSiE results using:
 ```
 step3.res <- mvmr.cml.susie.step3(step2.res$mvdat, step2.res$invalid.idx, step2.res$theta.vec, rho.mat)
 ```
+which resembles that of a SuSiE output. The key is that
+
 # TLDR
 
 Step 1 of MVMR-cML-SuSiE narrows down the set of promising metabolites from 249 to 43 after applying Bonferroni correcction. The harmonized data for MVMR analysis is stored in `mvdat`, while the UVMR-estimates for the 43 exposures and the list of invalid IVs (their corresponding indices) identified in step 2 are stored in `theta.vec` and `invalid.idx` of the `step2.res` list, respectively.
