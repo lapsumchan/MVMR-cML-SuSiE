@@ -99,7 +99,7 @@ step2.res <- mvmr.cml.susie.step2(exposure.ids.subset, outcome.id, sample.sizes)
 
 # TLDR
 
-Step 1 of MVMR-cML-SuSiE narrows down the set of promising metabolites to 43. The harmonized data for multivariable MR analysis is stored in `mvdat`, while the list of invalid IVs identified and UVMR-estimates for the 43 exposures in step 2 are stored in `invalid.idx` and `theta.vec` of the `step2.res` list, respectively.
+Step 1 of MVMR-cML-SuSiE narrows down the set of promising metabolites to 43. The harmonized data for multivariable MR analysis is stored in `mvdat`, while the UVMR-estimates for the 43 exposures and the list of invalid IVs identified in step 2 are stored in `invalid.idx` and `theta.vec` of the `step2.res` list, respectively.
 
 ### References
 
