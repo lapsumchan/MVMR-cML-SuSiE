@@ -97,6 +97,7 @@ Similar to step 1, we need the exposure IDs (`exposure.ids.subset`), in this cas
 sample.sizes.subset <- rep(85934, 43)
 ```
 again, as it contains the minimum sample size.
+```
 step2.res <- mvmr.cml.susie.step2(exposure.ids.subset, outcome.id, sample.sizes)
 ```
 
