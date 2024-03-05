@@ -9,7 +9,7 @@ mvmr.cml.susie.step1 <- function(exposure.ids, outcome.id, sample.sizes) {
     exposure.dat <- extract_instruments(exposure.ids[i])
     
     # Get effects of instruments on outcome
-    outcome.dat <- extract_outcome_data(snps=exposure.dat$SNP, outcomes = outcome.id)
+    outcome.dat <- extract_outcome_data(snps = exposure.dat$SNP, outcomes = outcome.id)
     
     # Harmonise the exposure and outcome data
     dat <- harmonise_data(exposure.dat, outcome.dat)
@@ -32,10 +32,10 @@ mvmr.cml.susie.step1 <- function(exposure.ids, outcome.id, sample.sizes) {
 mvmr.cml.susie.step2 <- function(exposure.ids.subset, outcome.id, sample.sizes.subset) {
   
   # Get instruments jointly this time
-  exposure.dat <- extract_instruments(exposure.ids.subset)
+  exposure.dat <- mv_extract_exposures(exposure.ids.subset)
   
   # Get effects of instruments on outcome
-  outcome.dat <- extract_outcome_data(snps=exposure.dat$SNP, outcomes = outcome.id)
+  outcome.dat <- extract_outcome_data(snps = exposure.dat$SNP, outcomes = outcome.id)
   
   # Harmonise the exposure and outcome data
   mvdat <- mv_harmonise_data(exposure.dat, outcome.dat)
