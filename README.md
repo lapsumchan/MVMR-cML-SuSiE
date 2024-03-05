@@ -68,7 +68,7 @@ sample.sizes <- 85934
 
 which is the minimum sample size coming from the outcome AD (but not exposure).
 
-With the above three `R` objects, we are ready to run step 1 of MVMR-cML-SuSiE, which provides a list of *p*-values for all 249 metabolite exposures:
+With the above three `R` objects, we are ready to run step 1 of MVMR-cML-SuSiE, which provides a vector of *p*-values for all 249 metabolite exposures:
 
 ```
 step1.res <- mvmr.cml.susie.step1(exposure.ids, outcome.id, sample.sizes)
