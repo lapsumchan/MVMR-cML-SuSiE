@@ -96,6 +96,11 @@ Similar to step 1, we need the exposure IDs (`exposure.ids.subset`), in this cas
 ```
 step2.res <- mvmr.cml.susie.step2(exposure.ids.subset, outcome.id, sample.sizes)
 ```
+
+# TLDR
+
+Step 1 of MVMR-cML-SuSiE narrows down the set of promising metabolites to 43. The harmonized data for multivariable MR analysis is stored in `mvdat`, while the list of invalid IVs identified and UVMR-estimates for the 43 exposures in step 2 are stored in `invalid.idx` and `theta.vec` of the `step2.res` list, respectively.
+
 ### References
 
 [1] Borges, Maria Carolina, et al. "Role of circulating polyunsaturated fatty acids on cardiovascular diseases risk: analysis using Mendelian randomization and fatty acid genetic association data from over 114,000 UK Biobank participants." BMC medicine 20.1 (2022): 1-14.
