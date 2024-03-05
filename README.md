@@ -57,4 +57,4 @@ exposure.ids <- ao$id[metd.idx]
 
 ### References
 
-[1] 
+[1] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
