@@ -121,7 +121,7 @@ step2.res$invalid.idx
 
 In addition, the initial estimates for exposures used for iterative SuSiE algorithm in step 3 are stored in `step2.res$theta.vec`.
 
-Finally, in order to run the iterative SuSiE algorithm, we just need the (43 + 1 = 44) x 44 genetic correlation matrix, which was obtained using bivariate linkage disequilibrium score (LDSC) regression. The entire genetic 250 x 250 correlation matrix is provided here:
+Finally, in order to run the iterative SuSiE algorithm, we just need the (43 + 1 = 44) x 44 genetic correlation matrix, which was obtained using bivariate linkage disequilibrium score (LDSC) regression<sup>[4]</sup]. The entire genetic 250 x 250 correlation matrix is provided here:
 ```
 rho.mat <- matrix(0, 250, 250)
 rho.mat[1:249,1:249] <- readRDS("metdrho.RDS")
@@ -148,3 +148,5 @@ Step 1 of MVMR-cML-SuSiE narrows down the set of promising metabolites from 249 
 [2] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
 
 [3] Bellenguez, Céline, et al. "New insights into the genetic etiology of Alzheimer’s disease and related dementias." Nature genetics 54.4 (2022): 412-436.
+
+[4] Bulik-Sullivan, Brendan, et al. "An atlas of genetic correlations across human diseases and traits." Nature genetics 47.11 (2015): 1236-1241.
