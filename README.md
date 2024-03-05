@@ -67,6 +67,14 @@ sample.sizes <- 85934
 ```
 
 which is the minimum sample size coming from the outcome AD (but not exposure).
+
+# Step 1
+
+With the above three `R` objects, we are ready to run step 1 of MVMR-cML-SuSiE, which provides a list of *p*-values for all 249 metabolite exposures:
+
+```
+step1.res <- mvmr.cml.susie.step1(exposure.ids, outcome.id, sample.sizes)
+```
 ### References
 
 [1] Borges, Maria Carolina, et al. "Role of circulating polyunsaturated fatty acids on cardiovascular diseases risk: analysis using Mendelian randomization and fatty acid genetic association data from over 114,000 UK Biobank participants." BMC medicine 20.1 (2022): 1-14.
