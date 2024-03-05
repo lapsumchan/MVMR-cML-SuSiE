@@ -26,7 +26,7 @@ First, we need to install a few dependencies [`TwoSampleMR`](https://mrcieu.gith
     devtools::install_github("xue-hr/MRcML")
     devtools::install_github("ZhaotongL/MVMR-cML")
     
-which should install within a couple of minutes on a standard machine. Please refer to the hyperlinked Github pages for help if the corresponding `R` packages cannot be installed properly.
+which should install within a couple of minutes on a standard machine. Please refer to above the hyperlinked Github pages for help if the corresponding `R` packages cannot be installed properly.
 
 # Demo
 
@@ -44,3 +44,17 @@ and the source code containing all the main functions:
 ```
 source("main.R")
 ```
+
+We will illustrate our function via the same UK Biobank (UKB) metabolite example used in our manuscript, and the outcome of interest is Alzheimer's disease (AD). The 249 UKB metabolites are available from the OpenGWAS database<sup>[1]</sup> with `met-d` prefix:
+
+```
+ao <- available_outcomes()
+
+# Use grep to find ids that start with "met-d"
+metd.idx <- grep("^met-d", ao$id)
+exposure.ids <- ao$id[metd.idx]
+```
+
+### References
+
+[1] 
