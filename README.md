@@ -60,6 +60,13 @@ As for the AD summary statistics, we will be using the largest AD cohort by Bell
 outcome.id <- "ebi-a-GCST90027158"
 ```
 
+We also need to prepare a vector of sample sizes corresponding to each exposures in `sample.sizes`. However, only the minimum sample size will be used for cML. Thus for illustrative purpose, it suffice to set:
+
+```
+sample.sizes <- 85934
+```
+
+which is the minimum sample size coming from the outcome AD (but not exposure).
 ### References
 
 [1] Borges, Maria Carolina, et al. "Role of circulating polyunsaturated fatty acids on cardiovascular diseases risk: analysis using Mendelian randomization and fatty acid genetic association data from over 114,000 UK Biobank participants." BMC medicine 20.1 (2022): 1-14.
