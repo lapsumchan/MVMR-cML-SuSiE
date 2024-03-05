@@ -100,7 +100,7 @@ sample.sizes.subset <- rep(85934, 43)
 again, as it contains the minimum sample size. Then we can run step 2 of MVMR-cML-SuSiE using
 
 ```
-step2.res <- mvmr.cml.susie.step2(exposure.ids.subset, outcome.id, sample.sizes)
+step2.res <- mvmr.cml.susie.step2(exposure.ids.subset, outcome.id, sample.sizes.subset)
 ```
 
 and this step should complete within half an hour on a standard computer. Nonetheless, for convenience we also provide the end results which can be loaded using:
