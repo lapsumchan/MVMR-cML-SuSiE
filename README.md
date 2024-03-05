@@ -151,7 +151,7 @@ Note that Gln (glutamine) has 0.949821743 (95.0%) PIP for the first signal clust
 sort(unique(which(step3.res$alpha > 1/43, arr.ind = TRUE)[,1]))
 [1] 1 2
 ```
-to find out there are in total 2 signal clusters. Nonetheless, SuSiE is robust to the overspecification of the number of signal clusters<sup>[5]</sup>. If we re-run step 3 by assuming 2 clusters, we still get pretty much the same results:
+to find out there are in total 2 signal clusters. Nonetheless, SuSiE is robust to the overspecification of the number of signal clusters<sup>[5]</sup>. If we re-run step 3 by assuming 2 clusters, we pretty much obtain the same results:
 ```
 step3.res.v2 <- mvmr.cml.susie.step3(step2.res$mvdat, step2.res$invalid.idx, step2.res$theta.vec, rho.mat, 2)
 head(step3.res.v2$alpha)
