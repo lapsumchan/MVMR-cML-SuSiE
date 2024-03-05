@@ -113,8 +113,7 @@ This step provides the OpenGWAS harmonized data needed for multivariable Mendeli
 dim(step2.res$mvdat$exposure_beta)
 [1] 187  43
 ```
-
-Moreover, the indices of invalid IVs which are stored in `step2.res$invalid.idx`:
+In other words, there are 187 instrumental variables (IVs) for the 43 exposures after data harmonization. Notice this harmonized data has not been filtered for invalid IVs. The indices of invalid IVs which are stored in `step2.res$invalid.idx`:
 ```
 step2.res$invalid.idx
 [1]  11  28  62  83  89  91  99 122 131 144
