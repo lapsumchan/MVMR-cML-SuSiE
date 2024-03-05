@@ -101,10 +101,13 @@ again, as it contains the minimum sample size.
 step2.res <- mvmr.cml.susie.step2(exposure.ids.subset, outcome.id, sample.sizes)
 ```
 
-This step provides 
+This step provides the indices of invalid IVs which is stored in `step2.res$invalid.idx`. Moreover, the initial values for exposure estimates used for iterative SuSiE algorithm in step 3 are stored in `step2.res$theta.vec`. The harmonized data for multivariable Mendelian randomization (MVMR) is stored in `step2.res$mvdat`. This step should complete within half an hour on a standard computer. We also provide the end results which can be loaded using:
+```
+step2.res <- readRDS("step2res.RDS")
+```
 # TLDR
 
-Step 1 of MVMR-cML-SuSiE narrows down the set of promising metabolites from 249 to 43 after applying Bonferroni correcction. The harmonized data for multivariable MR analysis is stored in `mvdat`, while the UVMR-estimates for the 43 exposures and the list of invalid IVs identified in step 2 are stored in `invalid.idx` and `theta.vec` of the `step2.res` list, respectively.
+Step 1 of MVMR-cML-SuSiE narrows down the set of promising metabolites from 249 to 43 after applying Bonferroni correcction. The harmonized data for MVMR analysis is stored in `mvdat`, while the UVMR-estimates for the 43 exposures and the list of invalid IVs (their corresponding indices) identified in step 2 are stored in `theta.vec` and `invalid.idx` of the `step2.res` list, respectively.
 
 ### References
 
