@@ -80,7 +80,7 @@ head(step1.res)
 [1] 0.521785682 0.472388096 0.012445326 0.005743464 0.747003373 0.023165548
 ```
 
-Notice that it may take a while to run UVMR-cML on 249 metabolites in real time. The end results of this step are provided in this Github for convenience and can be loaded using:
+Notice that it may take a while to run UVMR-cML on 249 metabolites in real time, depending on the traffic of OpenGWAS. The end results of this step are provided in this Github for convenience and can be loaded using:
 ```
 step1.res <- readRDS("step1res.RDS")
 ```
