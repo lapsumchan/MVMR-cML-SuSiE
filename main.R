@@ -4,7 +4,6 @@ mvmr.cml.susie.step1 <- function(exposure.ids, outcome.id, sample.sizes) {
   pval.vec <- rep(NA, L)
   
   for (i in 1:L) {
-    print(i)
     # Get instruments
     exposure.dat <- extract_instruments(exposure.ids[i])
     
@@ -90,6 +89,20 @@ mvmr.cml.susie.step3 <- function(mvdat, invalid.idx, theta.vec, rho.mat,
   SigmaX <- mvdat$exposure_se
   seY <- mvdat$outcome_se
   
+  # Create a list of genetic correlation corresponding to individual i
+  sei.list <- list()
+  
+  for (i in 1:m.star) {
+    sei.list[[i]] <- c(SigmaX[i,], seY[i])
+  }
+  
+  # Create a list of variance corresponding to individual i
+  Sigmai.list <- list()
+  
+  for (i in 1:m.star) {
+    Sigmai.list[[i]] <- diag(sei.list[[i]]) %*% rho.mat %*% diag(sei.list[[i]])
+  }
+  
   # Create a list of profile likelihood variance (denominator) corresponding to individual i
   new.sigma.vec <- rep(NA, m.star)
   
@@ -139,7 +152,7 @@ mvmr.cml.susie.step3 <- function(mvdat, invalid.idx, theta.vec, rho.mat,
     diff <- sum((prev.theta - theta.vec)^2)
     prev.norm <- diff
     if (diff > 0) {
-      prev.theta <- theta.vec2
+      prev.theta <- theta.vec
     } else if (diff < 0) {
       iter <- iter - 1
       break
