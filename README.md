@@ -210,7 +210,7 @@ MVcML.BIC.SE.sub1 <- MVcML_SdTheta(b_exp = mvdat.sub1$exposure_beta,
 
 MVcMLBIC.pval.sub1 <- pnorm(-abs(MVcML.res.sub1$BIC_theta/MVcML.BIC.SE.sub1))*2
 ```
-we obtain the causal effect estimates for glutamine and ratio of apolipoprotein B to apolipoprotein A1 (ApoB/A1) to be -0.10 and -0.11, respectively:
+we obtain the causal effect estimates for glutamine and ratio of apolipoprotein B to apolipoprotein A1 (ApoB/A1) to be both -0.12:
 ```
 MVcML.res.sub1$BIC_theta
            [,1]
