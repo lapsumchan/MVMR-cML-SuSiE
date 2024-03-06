@@ -119,7 +119,7 @@ step2.res$invalid.idx
 [1]  11  28  62  83  89  91  99 122 131 144
 ```
 
-In addition, the initial estimates for exposures used for iterative SuSiE algorithm in step 3 are stored in `step2.res$theta.vec`.
+In addition, the initial causal estimates for exposures used for the iterative SuSiE algorithm in step 3 are stored in `step2.res$theta.vec`.
 
 Finally, in order to run the iterative SuSiE algorithm, we just need the (43 + 1 = 44) x 44 genetic correlation matrix, which was obtained using bivariate linkage disequilibrium score (LDSC) regression<sup>[4]</sup>. The entire genetic 250 x 250 correlation matrix is provided here:
 ```
