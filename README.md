@@ -55,7 +55,7 @@ metd.idx <- grep("^met-d", ao$id)
 exposure.ids <- ao$id[metd.idx]
 ```
 
-As for the AD summary statistics, we will be using the largest AD cohort by Bellenguez et al.<sup>[3]</sup>, which is also available in [OpenGWAS](https://gwas.mrcieu.ac.uk/datasets/ebi-a-GCST90027158/). The corresponding ID is given by:
+As for AD summary statistics, we will be using the largest AD cohort by Bellenguez et al.<sup>[3]</sup>, which is also available in [OpenGWAS](https://gwas.mrcieu.ac.uk/datasets/ebi-a-GCST90027158/). The corresponding ID is given by:
 ```
 outcome.id <- "ebi-a-GCST90027158"
 ```
