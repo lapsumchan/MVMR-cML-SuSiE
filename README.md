@@ -166,7 +166,7 @@ which(step3.res$alpha[1,] > 1/43)
 met-d-Gln 
         3 
 
-> which(step3.res$alpha[2,] > 1/43)
+which(step3.res$alpha[2,] > 1/43)
 met-d-ApoB_by_ApoA1       met-d-L_LDL_P     met-d-M_VLDL_FC      met-d-M_VLDL_P 
                   2                   9                  18                  19 
     met-d-M_VLDL_PL       met-d-S_LDL_P      met-d-S_VLDL_C     met-d-S_VLDL_CE 
@@ -217,7 +217,7 @@ MVcML.res.sub1$BIC_theta
 [1,] -0.1232026
 [2,] -0.1182063
 ```
-This indicates both glutamine and ApoB/A1 has a protective effect for AD. Moreover, this result is highly significant:
+and this indicates both glutamine and ApoB/A1 has a protective effect for AD. Moreover, this result is highly significant:
 ```
 MVcMLBIC.pval.sub1
              [,1]
