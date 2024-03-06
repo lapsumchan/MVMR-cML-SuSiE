@@ -178,7 +178,7 @@ met-d-ApoB_by_ApoA1       met-d-L_LDL_P     met-d-M_VLDL_FC      met-d-M_VLDL_P
     met-d-XS_VLDL_P    met-d-XS_VLDL_PL 
                  37                  38 
 ```
-and re-run MVMR-cML for all submodels. Using `met-d-Gln` and `met-d-ApoB_by_ApoA1` as an example:
+and re-run MVMR-cML for all 18 submodels. Using `met-d-Gln` and `met-d-ApoB_by_ApoA1` (the most prominent result) as an example:
 
 ```
 exposure.dat.sub1 <- mv_extract_exposures(c("met-d-Gln", "met-d-ApoB_by_ApoA1"))
