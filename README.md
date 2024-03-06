@@ -92,7 +92,7 @@ exposure.ids.subset <- exposure.ids[subset.idx]
 ```
 which is stored in `exposure.ids.subset` and will be used in step 2 of MVMR-cML-SuSiE. In this case, we used a Bonferroni correction cutoff of `0.05 / 27`, where 27 corresponds to the number of principal components (PCs) explaining 95% variability of the metabolite. This gives us 43 metabolite exposures remaining to work with. Notice the cutoff being used is study-specific and should be varied accordingly.
 
-Similar to step 1, we need the exposure IDs (`exposure.ids.subset`), in this case, a vector containing 43 `met-d` IDs, `outcome.id` and `sample.sizes.subset` (which should be same length as `exposure.ids.subset` corresponding to their sample sizes). Nonetheless for simplicity, we use
+Similar to step 1, we need the exposure IDs (`exposure.ids.subset`), a vector containing 43 `met-d` IDs, `outcome.id` and `sample.sizes.subset` (which should be same length as `exposure.ids.subset` corresponding to their sample sizes). Nonetheless for simplicity, we use
 
 ```
 sample.sizes.subset <- rep(85934, 43)
