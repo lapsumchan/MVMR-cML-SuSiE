@@ -26,7 +26,7 @@ First, we need to install a few dependencies [`TwoSampleMR`](https://mrcieu.gith
     devtools::install_github("xue-hr/MRcML")
     devtools::install_github("ZhaotongL/MVMR-cML")
     
-which should install within a couple of minutes on a standard machine. Please refer to above the hyperlinked Github pages for help if the corresponding `R` packages cannot be installed properly.
+which should install within a couple of minutes on a standard machine. Please refer to the above hyperlinked Github pages for help if the corresponding `R` packages cannot be installed properly.
 
 # Demo
 
@@ -103,7 +103,7 @@ again, as it contains the minimum sample size. Then we can run step 2 of MVMR-cM
 step2.res <- mvmr.cml.susie.step2(exposure.ids.subset, outcome.id, sample.sizes.subset)
 ```
 
-and this step should complete within half an hour on a standard computer. Nonetheless, for convenience we also provide the end results which can be loaded using:
+and this step should complete within half an hour on a standard computer. Again for convenience we provide the end results which can be loaded using:
 ```
 step2.res <- readRDS("step2res.RDS")
 ```
@@ -151,7 +151,7 @@ Note that Gln (glutamine) has 0.949821743 (95.0%) PIP for the first signal clust
 sort(unique(which(step3.res$alpha > 1/43, arr.ind = TRUE)[,1]))
 [1] 1 2
 ```
-to find out there are in total 2 signal clusters. Nonetheless, SuSiE is robust to the overspecification of the number of signal clusters<sup>[5]</sup>. If we re-run step 3 by assuming 2 clusters, we pretty much obtain the same results:
+to find out there are in total 2 signal clusters. Fortunately, SuSiE is robust to the overspecification of the number of signal clusters<sup>[5]</sup>. If we re-run step 3 by assuming 2 clusters, we pretty much obtain the same results:
 ```
 step3.res.v2 <- mvmr.cml.susie.step3(step2.res$mvdat, step2.res$invalid.idx, step2.res$theta.vec, rho.mat, 2)
 head(step3.res.v2$alpha)
@@ -178,7 +178,7 @@ met-d-ApoB_by_ApoA1       met-d-L_LDL_P     met-d-M_VLDL_FC      met-d-M_VLDL_P
     met-d-XS_VLDL_P    met-d-XS_VLDL_PL 
                  37                  38 
 ```
-and re-run MVMR-cML for all 18 submodels. Using `met-d-Gln` and `met-d-ApoB_by_ApoA1` (the most prominent result) as an example:
+and re-run MVMR-cML for each of the 1 x 18 = 18 probable models. Using 1 of the 18 models with `met-d-Gln` and `met-d-ApoB_by_ApoA1` as an example:
 
 ```
 exposure.dat.sub1 <- mv_extract_exposures(c("met-d-Gln", "met-d-ApoB_by_ApoA1"))
