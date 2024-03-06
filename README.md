@@ -185,12 +185,12 @@ exposure.dat.sub1 <- mv_extract_exposures(c("met-d-Gln", "met-d-ApoB_by_ApoA1"))
 outcome.dat.sub1 <- extract_outcome_data(snps=exposure.dat.sub1$SNP, outcomes = outcome.id)
 mvdat.sub1 <- mv_harmonise_data(exposure.dat.sub1, outcome.dat.sub1)
 
-K <- dim(mvdat.sub1$exposure_beta)[1]
+K.sub1 <- dim(mvdat.sub1$exposure_beta)[1]
 
-ids.sub1 <- c(3, 2)
+ids.sub1 <- c(10, 24) # index 10 corresponds to met-d-Gln and 24 corresponds to met-d-ApoB_by_ApoA1
 rho.mat.sub1 <- rho.mat[c(ids.sub1,44), c(ids.sub1,44)]
 
-Sig_inv_l <- invcov_mvmr(se_bx = mvdat.sub1$exposure_se,
+Sig.inv.l.sub1 <- invcov_mvmr(se_bx = mvdat.sub1$exposure_se,
                          se_by = mvdat.sub1$outcome_se,
                          rho_mat = rho.mat.sub1)
 
@@ -199,18 +199,32 @@ n <- 85934
 MVcML.res.sub1 <- MVmr_cML_DP(b_exp = mvdat.sub1$exposure_beta,
                          b_out = as.matrix(mvdat.sub1$outcome_beta),
                          se_bx = mvdat.sub1$exposure_se,
-                         Sig_inv_l = Sig_inv_l, n = n, num_pert = 100,
-                         K_vec = 0:(K-3))
+                         Sig_inv_l = Sig.inv.l.sub1, n = n, num_pert = 100,
+                         K_vec = 0:(K.sub1-3))
 
 MVcML.BIC.SE.sub1 <- MVcML_SdTheta(b_exp = mvdat.sub1$exposure_beta,
                               b_out = as.matrix(mvdat.sub1$outcome_beta),
-                              Sig_inv_l = Sig_inv_l,
-                              theta = MVcML_res$BIC_theta,
-                              zero_ind = setdiff(1:length(mvdat.sub1$outcome_beta), MVcML_res$BIC_invalid))
+                              Sig_inv_l = Sig.inv.l.sub1,
+                              theta = MVcML.res.sub1$BIC_theta,
+                              zero_ind = setdiff(1:length(mvdat.sub1$outcome_beta), MVcML.res.sub1$BIC_invalid))
 
-MVcMLBIC.pval.sub1 <- pnorm(-abs(MVcML.res.sub1$BIC_theta/MVcML_BIC_SE))*2
+MVcMLBIC.pval.sub1 <- pnorm(-abs(MVcML.res.sub1$BIC_theta/MVcML.BIC.SE.sub1))*2
 ```
-
+we obtain the causal effect estimates for glutamine and ratio of apolipoprotein B to apolipoprotein A1 (ApoB/A1) to be -0.10 and -0.11, respectively:
+```
+MVcML.res.sub1$BIC_theta
+           [,1]
+[1,] -0.1232026
+[2,] -0.1182063
+```
+This indicates both glutamine and ApoB/A1 has a protective effect for AD. Moreover, this result is highly significant:
+```
+MVcMLBIC.pval.sub1
+             [,1]
+[1,] 9.224909e-07
+[2,] 2.501911e-05
+```
+For more detailed usage of the MVMR-cML `R` package `
 ### References
 
 [1] Borges, Maria Carolina, et al. "Role of circulating polyunsaturated fatty acids on cardiovascular diseases risk: analysis using Mendelian randomization and fatty acid genetic association data from over 114,000 UK Biobank participants." BMC medicine 20.1 (2022): 1-14.
