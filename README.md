@@ -159,8 +159,8 @@ to find out there are in total 2 signal clusters. Fortunately, SuSiE is robust t
 step3.res.v2 <- mvmr.cml.susie.step3(step2.res$mvdat, step2.res$invalid.idx, step2.res$theta.vec, rho.mat, 2)
 head(step3.res.v2$alpha)
      met-d-ApoA1 met-d-ApoB_by_ApoA1   met-d-Gln met-d-GlycA  met-d-IDL_C met-d-IDL_CE
-[1,] 0.001298322         0.001179427 0.949826388 0.004922565 0.0007829557  0.000784398
-[2,] 0.005830416         0.048773571 0.002128685 0.002302252 0.0028553024  0.002940255
+[1,] 0.001298390         0.001179498 0.949823273 0.004922889 0.0007830073 0.0007844499
+[2,] 0.005830347         0.048772690 0.002128719 0.002302289 0.0028553540 0.0029403107
 ```
 
 With this, we can identify the exposures associated with each signal cluster:
