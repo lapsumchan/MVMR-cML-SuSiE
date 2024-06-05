@@ -53,6 +53,9 @@ ao <- available_outcomes()
 # Use grep to find ids that start with "met-d"
 metd.idx <- grep("^met-d", ao$id)
 exposure.ids <- ao$id[metd.idx]
+
+# Make the ids in alphabetical order (to match the ordering of summary statistics given by `TwoSampleMR` package, i.e., `mvdat` in step 2 of our method)
+exposure.ids <- sort(exposure.ids)
 ```
 
 As for AD summary statistics, we will be using the largest AD cohort by Bellenguez et al.<sup>[3]</sup>, which is also available in [OpenGWAS](https://gwas.mrcieu.ac.uk/datasets/ebi-a-GCST90027158/). The corresponding ID is given by:
@@ -77,7 +80,7 @@ step1.res <- mvmr.cml.susie.step1(exposure.ids, outcome.id, sample.sizes)
 which, upon finishing looks like this:
 ```
 head(step1.res)
-[1] 0.521785682 0.472388096 0.012445326 0.005743464 0.747003373 0.023165548
+[1] 0.382700852 0.175206015 0.961084990 0.023165548 0.014269879 0.001754046
 ```
 
 Notice that it may take a while to run UVMR-cML on 249 metabolites in real time, depending on the traffic of OpenGWAS. The end results of this step are provided in this Github for convenience and can be loaded using:
