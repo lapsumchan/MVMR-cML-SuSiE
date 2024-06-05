@@ -54,7 +54,7 @@ ao <- available_outcomes()
 metd.idx <- grep("^met-d", ao$id)
 exposure.ids <- ao$id[metd.idx]
 
-# Make the ids in alphabetical order (to match the ordering of summary statistics given by `TwoSampleMR` package, i.e., `mvdat` in step 2 of our method)
+# Make the ids in alphabetical order (to match the ordering of summary statistics given by TwoSampleMR package, i.e., mvdat in step 2 below)
 exposure.ids <- sort(exposure.ids)
 ```
 
