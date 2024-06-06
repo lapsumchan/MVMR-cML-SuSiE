@@ -184,13 +184,13 @@ met-d-ApoB_by_ApoA1       met-d-L_LDL_P     met-d-M_VLDL_FC      met-d-M_VLDL_P
 and re-run MVMR-cML for each of the 1 x 18 = 18 probable models. Using 1 of the 18 models with `met-d-Gln` and `met-d-ApoB_by_ApoA1` as an example:
 
 ```
-exposure.dat.sub1 <- mv_extract_exposures(c("met-d-Gln", "met-d-ApoB_by_ApoA1"))
+exposure.dat.sub1 <- mv_extract_exposures(c("met-d-ApoB_by_ApoA1", "met-d-Gln"))
 outcome.dat.sub1 <- extract_outcome_data(snps=exposure.dat.sub1$SNP, outcomes = outcome.id)
 mvdat.sub1 <- mv_harmonise_data(exposure.dat.sub1, outcome.dat.sub1)
 
 K.sub1 <- dim(mvdat.sub1$exposure_beta)[1]
 
-ids.sub1 <- c(10, 24) # index 10 corresponds to met-d-Gln and 24 corresponds to met-d-ApoB_by_ApoA1
+ids.sub1 <- c(2, 3) # index 2 corresponds to met-d-ApoB_by_ApoA1 and 3 corresponds to met-d-Gln
 rho.mat.sub1 <- rho.mat[c(ids.sub1,44), c(ids.sub1,44)]
 
 Sig.inv.l.sub1 <- invcov_mvmr(se_bx = mvdat.sub1$exposure_se,
@@ -217,15 +217,15 @@ we obtain the causal effect estimates for glutamine and ratio of apolipoprotein 
 ```
 MVcML.res.sub1$BIC_theta
            [,1]
-[1,] -0.1232026
-[2,] -0.1182063
+[1,] -0.1232354
+[2,] -0.1182489
 ```
 and this indicates both glutamine and ApoB/A1 has a protective effect for AD. Moreover, this result is highly significant:
 ```
 MVcMLBIC.pval.sub1
              [,1]
-[1,] 9.224909e-07
-[2,] 2.501911e-05
+[1,] 9.175066e-07
+[2,] 2.487480e-05
 ```
 For more detailed usage of the MVMR-cML `R` package, please refer to the Github page of [`MVMR-cML`](https://github.com/ZhaotongL/MVMR-cML).
 ### References
