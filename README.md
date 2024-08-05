@@ -142,14 +142,15 @@ which resembles that of a SuSiE output. The most relevant output is the 10 x 43 
 ```
 head(step3.res$alpha)
      met-d-ApoA1 met-d-ApoB_by_ApoA1   met-d-Gln met-d-GlycA  met-d-IDL_C met-d-IDL_CE
-[1,] 0.001298515         0.001179678 0.949818624 0.004922675 0.0007830701  0.000784514
-[2,] 0.005830479         0.048772676 0.002128803 0.002302367 0.0028554353  0.002940393
-[3,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140  0.023255814
-[4,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140  0.023255814
-[5,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140  0.023255814
-[6,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140  0.023255814
+
+[1,] 0.001298515         0.001179678 0.949818626 0.004922675 0.0007830701 0.0007845139
+[2,] 0.005830479         0.048772676 0.002128803 0.002302367 0.0028554352 0.0029403935
+[3,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140 0.0232558140
+[4,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140 0.0232558140
+[5,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140 0.0232558140
+[6,] 0.023255814         0.023255814 0.023255814 0.023255814 0.0232558140 0.0232558140
 ```
-Note that Gln (glutamine) has 0.949818624 (95.0%) PIP for the first signal cluster. We noticed when there are no clear signal (likely due to overspecification on the number of clusters) from an assumed cluster (i.e., cluster 3 to 10), SuSiE assigns a uniform probability to all exposures, in this case, 0.023255814 = 1/43. Thus, we can utilize the following code:
+Note that Gln (glutamine) has 0.949818626 (95.0%) PIP for the first signal cluster. We noticed when there are no clear signal (likely due to overspecification on the number of clusters) from an assumed cluster (i.e., cluster 3 to 10), SuSiE assigns a uniform probability to all exposures, in this case, 0.0232558140 = 1/43. Thus, we can utilize the following code:
 ```
 sort(unique(which(step3.res$alpha > 1/43, arr.ind = TRUE)[,1]))
 [1] 1 2
