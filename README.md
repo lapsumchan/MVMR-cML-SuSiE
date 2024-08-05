@@ -198,7 +198,7 @@ Sig.inv.l.sub1 <- invcov_mvmr(se_bx = mvdat.sub1$exposure_se,
                          se_by = mvdat.sub1$outcome_se,
                          rho_mat = rho.mat.sub1)
 
-n <- 85934
+n <- min(sample.sizes.subset[ids.sub1])
 
 MVcML.res.sub1 <- MVmr_cML_DP(b_exp = mvdat.sub1$exposure_beta,
                          b_out = as.matrix(mvdat.sub1$outcome_beta),
