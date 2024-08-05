@@ -64,9 +64,6 @@ outcome.id <- "ebi-a-GCST90027158"
 ```
 
 Notice that we need the minimum sample size amongst GWASs (exposure + outcome) for cML. Thus, we need to prepare a vector of sample sizes corresponding to each exposures in `sample.sizes`. This has been prepared in the file `metdn.RDS` so we just need to load it:
-
-Thus for illustrative purpose, it suffice to set:
-
 ```
 sample.sizes <- readRDS("metdn.RDS")
 ```
