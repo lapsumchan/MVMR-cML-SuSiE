@@ -228,7 +228,23 @@ MVcMLBIC.pval.sub1
 For more detailed usage of the MVMR-cML `R` package, please refer to the Github page of [`MVMR-cML`](https://github.com/ZhaotongL/MVMR-cML).
 
 # TLDR
-Users can provide their own version of harmonized data. For step 1, we require length `L` lists of summary statistics coefficients (beta) and standard errors (se) for both the exposures and outcomes. This is basically providing the univariable MR (UVMR) harmonized data for each exposure (and the outcome summary statistics corresponding to the IVs used). Notice that the set of `m` IVs should be independent (can be achieved by LD clumping), as this is a requirement for both UVMR-cML<sup>[7]</sup>, MVMR-cML<sup>[6]</sup> as well as our method (which builds upon on the former two methods). In our case, `L = 249`.
+Users can provide their own version of harmonized data. For step 1, we require length `L` lists of summary statistics coefficients (beta) and standard errors (se) for both the exposures and outcomes. This is basically providing the univariable MR (UVMR) harmonized data for each exposure (and the outcome summary statistics corresponding to the IVs used). Notice that the set of `m` IVs should be independent (can be achieved by LD clumping), as this is a requirement for both UVMR-cML<sup>[7]</sup>, MVMR-cML<sup>[6]</sup> as well as our method (which builds upon on the former two methods). In our case, `L = 249`. In addition, we also require a vector of length `L + 1` containing the sample sizes for each of the `L` exposures and the outcome GWAS (last element). The `metdn.RDS` file contains sample sizes for thr 249 exposures, while 487511 is the sample size for the AD (outcome) GWAS. Below shows all 5 objects required for step 1 if the users were to provide their own data:
+
+```
+sample.sizes <- readRDS("metdn.RDS")
+sample.sizes <- c(sample.sizes, 487511)
+
+beta.exposure.ls <- readRDS("beta.exposure.ls.RDS")
+se.exposure.ls <- readRDS("se.exposure.ls.RDS")
+beta.outcome.ls <- readRDS("beta.outcome.ls.RDS")
+se.outcome.ls <- readRDS("se.outcome.ls.RDS")
+```
+
+which upon running
+```
+step1.res <- mvmr.cml.susie.step1(sample.sizes = sample.sizes, beta.exposure.ls = beta.exposure.ls, se.exposure.ls = se.exposure.ls, beta.outcome.ls = beta.outcome.ls, se.outcome.ls = se.outcome.ls, use.openGWAS = FALSE)
+```
+with the `use.openGWAS` option as `FALSE` should yield identical results as the OpenGWAS dependent version in the README.
 ### References
 
 [1] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
