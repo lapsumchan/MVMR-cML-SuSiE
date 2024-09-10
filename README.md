@@ -250,6 +250,7 @@ Based on step 1, it should suggest a subset of `L.star` exposures that are furth
 ```
 subset.idx <- which(step1.res < 0.05 / 27)
 sample.sizes.subset <- sample.sizes[subset.idx]
+sample.sizes.subset <- c(sample.sizes.subset, 487511)
 ```
 and in this case, `L.star = 43`. The users will then need to provide a joint set of `m.star` IVs for the `L.star` exposures: two matrices for the exposure beta and se (both `m.star x L.star`), and two vectors for outcome beta and se (both length `m.star`), as well as a `m.star x L.star` *p*-value matrix from the exposure GWAS:
 
