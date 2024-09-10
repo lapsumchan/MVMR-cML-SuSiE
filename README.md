@@ -77,7 +77,7 @@ step1.res <- mvmr.cml.susie.step1(exposure.ids, outcome.id, sample.sizes)
 which, upon finishing looks like this:
 ```
 head(step1.res)
-[1] 0.382700852 0.175206015 0.961084990 0.023165548 0.014269879 0.001754046
+[1] 0.401999338 0.172905493 0.963813629 0.026442776 0.013637944 0.001762121
 ```
 
 Notice that it may take a while to run UVMR-cML on 249 metabolites in real time, depending on the traffic of OpenGWAS. The end results of this step are provided in this Github for convenience and can be loaded using:
