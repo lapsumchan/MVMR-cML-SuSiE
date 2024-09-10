@@ -1,7 +1,7 @@
 # MVMR-cML-SuSiE
 
 ### Overview
-This repository provides a demonstration on how to use the MVMR-cML-SuSiE `R` source code. The default option is dependent on the OpenGWAS database<sup>[1]</sup>, but users can also provide their own harmonized data (see TLDR towards the bottom of this README).
+This repository provides a demonstration on how to use the MVMR-cML-SuSiE `R` source code. The default option is dependent on the OpenGWAS database<sup>[1]</sup>, but users can also provide their own harmonized Mendelian randomization (MR) data (see TLDR towards the bottom of this README).
 
 # System Requirements
 
@@ -179,7 +179,7 @@ met-d-ApoB_by_ApoA1       met-d-L_LDL_P     met-d-M_VLDL_FC      met-d-M_VLDL_P
     met-d-XS_VLDL_P    met-d-XS_VLDL_PL 
                  37                  38 
 ```
-and re-run MVMR-cML for each of the 1 x 18 = 18 probable models. Using 1 of the 18 models with `met-d-Gln` and `met-d-ApoB_by_ApoA1` as an example:
+and re-run MVMR-cML<sup>[6]</sup> for each of the 1 x 18 = 18 probable models. Using 1 of the 18 models with `met-d-Gln` and `met-d-ApoB_by_ApoA1` as an example:
 
 ```
 exposure.dat.sub1 <- mv_extract_exposures(c("met-d-ApoB_by_ApoA1", "met-d-Gln"))
@@ -226,6 +226,9 @@ MVcMLBIC.pval.sub1
 [2,] 2.487480e-05
 ```
 For more detailed usage of the MVMR-cML `R` package, please refer to the Github page of [`MVMR-cML`](https://github.com/ZhaotongL/MVMR-cML).
+
+# TLDR
+Users can provide their own version of harmonized data. For step 1, we require length `L` lists of summary statistics coefficients (beta) and standard errors (se) for both the exposures and outcomes. This is basically providing the univariable MR (UVMR) harmonized data for each exposure (and the outcome summary statistics corresponding to the IVs used). Notice that the set of `m` IVs should be independent (can be achieved by LD clumping), as this is a requirement for both UVMR-cML<sup>[7]</sup>, MVMR-cML<sup>[6]</sup> as well as our method (which builds upon on the former two methods). In our case, `L = 249`.
 ### References
 
 [1] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
@@ -237,3 +240,7 @@ For more detailed usage of the MVMR-cML `R` package, please refer to the Github 
 [4] Bulik-Sullivan, Brendan, et al. "An atlas of genetic correlations across human diseases and traits." Nature genetics 47.11 (2015): 1236-1241.
 
 [5] Wang, Gao, et al. "A simple new approach to variable selection in regression, with application to genetic fine mapping." Journal of the Royal Statistical Society Series B: Statistical Methodology 82.5 (2020): 1273-1300.
+
+[6] Lin, Zhaotong, Haoran Xue, and Wei Pan. "Robust multivariable Mendelian randomization based on constrained maximum likelihood." The American Journal of Human Genetics 110.4 (2023): 592-605.
+
+[7] Xue, Haoran, Xiaotong Shen, and Wei Pan. "Constrained maximum likelihood-based Mendelian randomization robust to both correlated and uncorrelated pleiotropic effects." The American Journal of Human Genetics 108.7 (2021): 1251-1269.
