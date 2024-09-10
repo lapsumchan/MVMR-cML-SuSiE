@@ -228,7 +228,7 @@ MVcMLBIC.pval.sub1
 For more detailed usage of the MVMR-cML `R` package, please refer to the Github page of [`MVMR-cML`](https://github.com/ZhaotongL/MVMR-cML).
 
 # TLDR
-Users can provide their own version of harmonized data. For step 1, we require length `L` lists of summary statistics coefficients (beta) and standard errors (se) for both the exposures and outcomes. This is basically providing the univariable MR (UVMR) harmonized data for each exposure (and the outcome summary statistics corresponding to the IVs used). Notice that the set of `m` IVs should be independent (can be achieved by LD clumping), as this is a requirement for both UVMR-cML<sup>[7]</sup>, MVMR-cML<sup>[6]</sup> as well as our method (which builds upon on the former two methods). In our case, `L = 249`. In addition, we also require a vector of length `L + 1` containing the sample sizes for each of the `L` exposures and the outcome GWAS (last element). The `metdn.RDS` file contains sample sizes for thr 249 exposures, while 487511 is the sample size for the AD (outcome) GWAS. Below shows all 5 objects required for step 1 if the users were to provide their own data:
+Users can provide their own version of harmonized data. For step 1, we require length `L` lists of summary statistics coefficients (beta) and standard errors (se) for both the exposures and outcomes. This is basically providing the univariable MR (UVMR) harmonized data for each exposure (and the outcome summary statistics corresponding to the IVs used). Notice that the set of `m` IVs should be independent (can be achieved by LD clumping), as this is a requirement for both UVMR-cML<sup>[7]</sup>, MVMR-cML<sup>[6]</sup> as well as our method (which builds upon on the former two methods). In our case, `L = 249`. In addition, we also require a vector of length `L + 1` containing the sample sizes for each of the `L` exposures and the outcome GWAS (last element). The `metdn.RDS` file contains sample sizes for the 249 UKB exposures, while 487511 is the sample size for the AD (outcome) GWAS. Below shows all 5 objects required for step 1 if the users were to provide their own data:
 
 ```
 sample.sizes <- readRDS("metdn.RDS")
@@ -245,6 +245,21 @@ which upon running
 step1.res <- mvmr.cml.susie.step1(sample.sizes = sample.sizes, beta.exposure.ls = beta.exposure.ls, se.exposure.ls = se.exposure.ls, beta.outcome.ls = beta.outcome.ls, se.outcome.ls = se.outcome.ls, use.openGWAS = FALSE)
 ```
 with the `use.openGWAS` option as `FALSE` should yield identical results as the OpenGWAS dependent version in the README.
+
+Based on step 1, it should suggest a subset of `L.star` exposures that are further analysis-worthy:
+```
+subset.idx <- which(step1.res < 0.05 / 27)
+sample.sizes.subset <- sample.sizes[subset.idx]
+```
+and in this case, `L.star = 43`. The users will then need to provide a joint set of `m.star` IVs for the `L.star` exposures: two matrices for the exposure beta and se (both `m.star x L.star`), and two vectors for outcome beta and se (both length `m.star`), as well as a `m.star x L.star` *p*-value matrix from the exposure GWAS:
+
+```
+beta.exposure.mat <- readRDS("beta.exposure.mat.RDS")
+se.exposure.mat <- readRDS("se.exposure.mat.RDS")
+beta.outcome.vec <- readRDS("beta.outcome.vec.RDS")
+se.outcome.vec <- readRDS("se.outcome.vec.RDS")
+pval.exposure.mat <- readRDS("pval.exposure.mat.RDS")
+```
 ### References
 
 [1] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
