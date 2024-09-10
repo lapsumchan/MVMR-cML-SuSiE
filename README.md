@@ -252,7 +252,7 @@ subset.idx <- which(step1.res < 0.05 / 27)
 sample.sizes.subset <- sample.sizes[subset.idx]
 sample.sizes.subset <- c(sample.sizes.subset, 487511)
 ```
-and in this case, `L.star = 43`. The users will then need to provide a joint set of `m.star` IVs for the `L.star` exposures: two matrices for the exposure beta and se (both `m.star x L.star`), and two vectors for outcome beta and se (both length `m.star`), as well as a `m.star x L.star` *p*-value matrix from the exposure GWAS:
+and in this case, `L.star = 43`. The users will then need to provide a joint set of `m.star` IVs for the `L.star` exposures: two matrices for the exposure beta and se (both `m.star x L.star`), and two vectors for outcome beta and se (both length `m.star`), as well as a `m.star x L.star` *p*-value matrix from the exposure GWAS (only IVs reaching `cutoff` argument, which default is set to `5e-8` are used for the re-analysis). Again, it cannot be overstated enough that the set of `m.star` IVs should be independent. Below loads the 5 objects required for step 2 if the users were to provide their own data (in addition to `sample.sizes.subset`):
 
 ```
 beta.exposure.mat <- readRDS("beta.exposure.mat.RDS")
@@ -261,6 +261,24 @@ beta.outcome.vec <- readRDS("beta.outcome.vec.RDS")
 se.outcome.vec <- readRDS("se.outcome.vec.RDS")
 pval.exposure.mat <- readRDS("pval.exposure.mat.RDS")
 ```
+which upon running
+```
+step2.res <- mvmr.cml.susie.step2(sample.sizes.subset = sample.sizes.subset, beta.exposure.mat = beta.exposure.mat, se.exposure.mat = se.exposure.mat, beta.outcome.vec = beta.outcome.vec, se.outcome.vec = se.outcome.vec, pval.exposure.mat = pval.exposure.mat, use.openGWAS = FALSE)
+```
+should also yield identical results as the OpenGWAS dependent version in the README.
+
+Finally, step 3 only depends on `mvdat`, `invalid.idx` and `theta.vec` (all been put together in step 2) and the genetic correlation matrix `rho.mat` (which should be `(L.star + 1) x (L.star + 1)`):
+```
+rho.mat <- matrix(0, 250, 250)
+rho.mat[1:249,1:249] <- readRDS("metdrho.RDS")
+rho.mat[250,250] <- 1
+
+rho.mat <- rho.mat[c(subset.idx,250),c(subset.idx,250)]
+
+step3.res <- mvmr.cml.susie.step3(step2.res$mvdat, step2.res$invalid.idx, step2.res$theta.vec, rho.mat)
+```
+Please refer back to the above README on `mvmr.cml.susie.step3` for the intepretation of the results (this is getting long!).
+
 ### References
 
 [1] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
