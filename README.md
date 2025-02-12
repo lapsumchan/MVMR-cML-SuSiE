@@ -46,9 +46,9 @@ As for AD summary statistics, we will be using the largest AD cohort by Bellengu
 outcome.id <- "ebi-a-GCST90027158"
 ```
 
-Notice that we need the minimum sample size amongst GWASs (exposure + outcome) for cML. Thus, we need to prepare a vector of sample sizes corresponding to each exposures in `sample.sizes`. This has been prepared in the file `metdn.RDS` so we just need to load it:
+Notice that we need the minimum sample size amongst GWASs (exposure + outcome) for cML. Thus, we need to prepare a vector of sample sizes corresponding to each exposures in `sample.sizes`. This has been lazy loaded in `example.dat`:
 ```
-sample.sizes <- readRDS("metdn.RDS")
+sample.sizes <- example.dat$step1$sample.sizes
 ```
 
 With the above three `R` objects, we are ready to run step 1 of MVMR-cML-SuSiE, which provides a vector of *p*-values for all 249 metabolite exposures:
@@ -63,9 +63,9 @@ head(step1.res)
 [1] 0.401999338 0.172905493 0.963813629 0.026442776 0.013637944 0.001762121
 ```
 
-Notice that it may take a while to run UVMR-cML on 249 metabolites in real time, depending on the traffic of OpenGWAS. The end results of this step are provided in this Github for convenience and can be loaded using:
+Notice that it may take a while to run UVMR-cML on 249 metabolites in real time, depending on the traffic of OpenGWAS. The end results of this step are also lazy loaded:
 ```
-step1.res <- readRDS("step1res.RDS")
+step1.res <- example.dat$step1$step1res
 ```
 
 With this, we can extract a list of metabolite exposure which we wish to further investigate:
@@ -86,9 +86,9 @@ Now, we can run step 2:
 step2.res <- mvmr.cml.susie.step2(exposure.ids.subset, outcome.id, sample.sizes.subset)
 ```
 
-and this step should complete within half an hour on a standard computer. Again for convenience we provide the end results which can be loaded using:
+and this step should complete within half an hour on a standard computer. Again for convenience the end results are lazy loaded:
 ```
-step2.res <- readRDS("step2res.RDS")
+step2.res <- example.dat$step2$step2res
 ```
 
 This step provides the OpenGWAS harmonized data needed for multivariable Mendelian randomization (MVMR) stored in `step2.res$mvdat`, of which the matrix associated with the exposure has dimension 187 x 43:
@@ -104,10 +104,10 @@ step2.res$invalid.idx
 
 In addition, the initial causal estimates for exposures used for the iterative SuSiE algorithm in step 3 are stored in `step2.res$theta.vec`.
 
-Finally, in order to run the iterative SuSiE algorithm, we just need the (43 + 1 = 44) x 44 genetic correlation matrix, which was obtained using bivariate linkage disequilibrium score (LDSC) regression<sup>[4]</sup>. The entire genetic 250 x 250 correlation matrix is provided here:
+Finally, in order to run the iterative SuSiE algorithm, we just need the (43 + 1 = 44) x 44 genetic correlation matrix, which was obtained using bivariate linkage disequilibrium score (LDSC) regression<sup>[4]</sup>. The genetic 249 x 249 correlation matrix is lazy loaded:
 ```
 rho.mat <- matrix(0, 250, 250)
-rho.mat[1:249,1:249] <- readRDS("metdrho.RDS")
+rho.mat[1:249,1:249] <- example.dat$step3$metdrho
 rho.mat[250,250] <- 1
 ```
 Notice we need to subset the indices accordingly to obtain the 44 x 44 matrix:
