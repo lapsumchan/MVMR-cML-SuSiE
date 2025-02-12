@@ -1,5 +1,5 @@
 ## Overview
-This repository provides a demonstration on how to use the MVMR-cML-SuSiE `R` source code. The default option is dependent on the OpenGWAS database<sup>[1]</sup>, but users can also provide their own harmonized Mendelian randomization (MR) data (see TLDR towards the bottom of this README).
+This repository provides a demonstration of the **MVMR-cML-SuSiE** `R` package, which implements our multivariable Mendelian randomization (MVMR) pipeline. By default, the function pull summary statistics from the OpenGWAS database<sup>[1]</sup>, but users can also provide your own harmonized MR data (see the **TLDR** section toward the end of this README).
 
 # System Requirements
 
@@ -7,7 +7,7 @@ This repository provides a demonstration on how to use the MVMR-cML-SuSiE `R` so
 
 ### OS Requirements
 
-The source code has been tested on Microsoft's Windows 10 operating system and Linux (Ubuntu 18.04). The source code should be compatible with Windows, Mac, and Linux operating systems.
+The package has been tested on Microsoft's Windows 10 operating system and Linux (Ubuntu 18.04). The package should be compatible with Windows, Mac, and Linux operating systems.
 
 Before using `MVMRcMLSuSiE` package, users should have `R` version 4.3.0 or higher, and several packages installed.
 
@@ -19,7 +19,7 @@ First, install `MVMRcMLSuSiE` from GitHub using `devtools`:
     # install.packages("devtools") 
     devtools::install_github("lapsumchan/MVMR-cML-SuSiE")
     
-Next, we need to install a few dependencies [`TwoSampleMR`](https://mrcieu.github.io/TwoSampleMR/), [`MRcML`](https://github.com/xue-hr/MRcML) and [`MVMRcML`](https://github.com/ZhaotongL/MVMR-cML):  
+Next, install the necessary dependencies [`TwoSampleMR`](https://mrcieu.github.io/TwoSampleMR/), [`MRcML`](https://github.com/xue-hr/MRcML) and [`MVMRcML`](https://github.com/ZhaotongL/MVMR-cML):  
 
     install.packages("remotes")
     remotes::install_github("MRCIEU/TwoSampleMR")
