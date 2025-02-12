@@ -1,10 +1,10 @@
 ### Installation  
 
-First, install `MVMR-cML-SuSiE` from GitHub using `devtools`:  
+First, install `MVMRcMLSuSiE` from GitHub using `devtools`:  
 
     # Install devtools if not already installed
     # install.packages("devtools") 
-    devtools::install_github("lapsumchan/MVMR-cML-SuSiE")
+    devtools::install_github("lapsumchan/MVMRcMLSuSiE")
     
 Next, we need to install a few dependencies [`TwoSampleMR`](https://mrcieu.github.io/TwoSampleMR/), [`MRcML`](https://github.com/xue-hr/MRcML) and [`MVMRcML`](https://github.com/ZhaotongL/MVMR-cML):  
 
