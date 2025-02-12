@@ -1,3 +1,16 @@
+## Overview
+This repository provides a demonstration on how to use the MVMR-cML-SuSiE `R` source code. The default option is dependent on the OpenGWAS database<sup>[1]</sup>, but users can also provide their own harmonized Mendelian randomization (MR) data (see TLDR towards the bottom of this README).
+
+# System Requirements
+
+## Software Requirements
+
+### OS Requirements
+
+The source code has been tested on Microsoft's Windows 10 operating system and Linux (Ubuntu 18.04). The source code should be compatible with Windows, Mac, and Linux operating systems.
+
+Before using `MVMRcMLSuSiE` package, users should have `R` version 4.3.0 or higher, and several packages installed.
+
 ### Installation  
 
 First, install `MVMRcMLSuSiE` from GitHub using `devtools`:  
