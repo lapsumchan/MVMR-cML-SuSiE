@@ -41,6 +41,11 @@ library(MRcML)
 library(MVMRcML)
 ```
 
+The package includes a lazy-loaded dataset, `example.dat`, which provides preprocessed inputs and results for each step:
+- **step1**: Contains the sample sizes and the results (`step1res`)
+- **step2**: Contains the results (`step2res`)
+- **step3**: Contains the genetic correlation matrix (`metdrho`) and the final SuSiE output (`step3res`)
+
 We will illustrate our function via the same UK Biobank (UKB) metabolite example used in our manuscript, and the outcome of interest is Alzheimer's disease (AD). The summary statistics of the 249 UKB metabolites by Borges et al.<sup>[2]</sup> are available from the OpenGWAS database<sup>[1]</sup> with `met-d` prefix:
 
 ```
