@@ -227,3 +227,72 @@ MVcMLBIC.pval.sub1
 [2,] 2.487480e-05
 ```
 For more detailed usage of the MVMR-cML `R` package, please refer to the Github page of [`MVMR-cML`](https://github.com/ZhaotongL/MVMR-cML).
+
+# TLDR
+Users can provide their own version of harmonized data. For step 1, we require length `L` lists of summary statistics coefficients (beta) and standard errors (se) for both the exposures and outcomes. This is basically providing the univariable MR (UVMR) harmonized data for each exposure (and the outcome summary statistics corresponding to the IVs used). Notice that the set of `m` IVs should be independent (can be achieved by LD clumping), as this is a requirement for both UVMR-cML<sup>[7]</sup>, MVMR-cML<sup>[6]</sup> as well as our method (which builds upon on the former two methods). In our case, `L = 249`. In addition, we also require a vector of length `L + 1` containing the sample sizes for each of the `L` exposures and the outcome GWAS (last element). The `metdn.RDS` file contains sample sizes for the 249 UKB exposures, while 487511 is the sample size for the AD (outcome) GWAS. Below shows all 5 objects required for step 1 if the users were to provide their own data:
+
+```
+sample.sizes <- example.dat$step1$sample.sizes
+sample.sizes <- c(sample.sizes, 487511)
+
+beta.exposure.ls <- example.dat$step1$beta.exposure.ls
+se.exposure.ls <- example.dat$step1$se.exposure.ls
+beta.outcome.ls <- example.dat$step1$beta.outcome.ls
+se.outcome.ls <- example.dat$step1$se.outcome.ls
+```
+
+which upon running
+```
+step1.res <- mvmr.cml.susie.step1(sample.sizes = sample.sizes, beta.exposure.ls = beta.exposure.ls, se.exposure.ls = se.exposure.ls, beta.outcome.ls = beta.outcome.ls, se.outcome.ls = se.outcome.ls, use.openGWAS = FALSE)
+```
+with the `use.openGWAS` option as `FALSE` should yield identical results as the OpenGWAS dependent version in the README.
+
+Based on step 1, it should suggest a subset of `L.star` exposures that are further analysis-worthy:
+```
+subset.idx <- which(step1.res < 0.05 / 27)
+sample.sizes.subset <- sample.sizes[subset.idx]
+sample.sizes.subset <- c(sample.sizes.subset, 487511)
+```
+and in this case, `L.star = 43`. The users will then need to provide a joint set of `m.star` IVs for the `L.star` exposures: two matrices for the exposure beta and se (both `m.star x L.star`), and two vectors for outcome beta and se (both length `m.star`), as well as a `m.star x L.star` *p*-value matrix from the exposure GWAS (only IVs reaching `cutoff` argument, which default is set to `5e-8` are used for the re-analysis). Again, it cannot be overstated enough that the set of `m.star` IVs should be independent. Below loads the 5 objects required for step 2 if the users were to provide their own data (in addition to `sample.sizes.subset`):
+
+```
+beta.exposure.mat <- example.dat$step2$beta.exposure.mat
+se.exposure.mat <- example.dat$step2$se.exposure.mat
+beta.outcome.vec <- example.dat$step2$beta.outcome.mat
+se.outcome.vec <- example.dat$step2$se.outcome.mat
+pval.exposure.mat <- example.dat$step2$pval.exposure.mat
+```
+which upon running
+```
+step2.res <- mvmr.cml.susie.step2(sample.sizes.subset = sample.sizes.subset, beta.exposure.mat = beta.exposure.mat, se.exposure.mat = se.exposure.mat, beta.outcome.vec = beta.outcome.vec, se.outcome.vec = se.outcome.vec, pval.exposure.mat = pval.exposure.mat, use.openGWAS = FALSE)
+```
+should also yield identical results as the OpenGWAS dependent version in the README.
+
+Finally, step 3 only depends on `mvdat`, `invalid.idx` and `theta.vec` (all been put together in step 2) and the genetic correlation matrix `rho.mat` (which should be `(L.star + 1) x (L.star + 1)`):
+```
+rho.mat <- matrix(0, 250, 250)
+rho.mat[1:249,1:249] <- example.dat$step3$metdrho
+rho.mat[250,250] <- 1
+
+rho.mat <- rho.mat[c(subset.idx,250),c(subset.idx,250)]
+
+step3.res <- mvmr.cml.susie.step3(step2.res$mvdat, step2.res$invalid.idx, step2.res$theta.vec, rho.mat)
+```
+Please refer back to the above README on `mvmr.cml.susie.step3` for the intepretation of the results (this is getting long!).
+
+### References
+
+[1] Elsworth, Ben, et al. "The MRC IEU OpenGWAS data infrastructure." BioRxiv (2020): 2020-08.
+
+[2] Borges, Maria Carolina, et al. "Role of circulating polyunsaturated fatty acids on cardiovascular diseases risk: analysis using Mendelian randomization and fatty acid genetic association data from over 114,000 UK Biobank participants." BMC medicine 20.1 (2022): 1-14.
+
+[3] Bellenguez, Céline, et al. "New insights into the genetic etiology of Alzheimer’s disease and related dementias." Nature genetics 54.4 (2022): 412-436.
+
+[4] Bulik-Sullivan, Brendan, et al. "An atlas of genetic correlations across human diseases and traits." Nature genetics 47.11 (2015): 1236-1241.
+
+[5] Wang, Gao, et al. "A simple new approach to variable selection in regression, with application to genetic fine mapping." Journal of the Royal Statistical Society Series B: Statistical Methodology 82.5 (2020): 1273-1300.
+
+[6] Lin, Zhaotong, Haoran Xue, and Wei Pan. "Robust multivariable Mendelian randomization based on constrained maximum likelihood." The American Journal of Human Genetics 110.4 (2023): 592-605.
+
+[7] Xue, Haoran, Xiaotong Shen, and Wei Pan. "Constrained maximum likelihood-based Mendelian randomization robust to both correlated and uncorrelated pleiotropic effects." The American Journal of Human Genetics 108.7 (2021): 1251-1269.
+
