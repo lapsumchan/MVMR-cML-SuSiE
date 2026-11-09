@@ -67,6 +67,18 @@ new `offline-full.R` file into that existing folder and run:
 Rscript --vanilla offline-full.R
 ```
 
+To run the independent step-1 fits with four R processes, use:
+
+```sh
+Rscript --vanilla offline-full.R --workers=4
+```
+
+The default is one process. Parallel execution uses base R socket workers,
+the same package library and random-number generator settings, and the
+existing seed of 1 for every exposure fit. Results are assembled in the
+original exposure order. Steps 2 and 3 remain serial. Choose a worker count
+appropriate for your machine; no additional packages are needed.
+
 This recomputes **all 249 step-1 screens**, applies the original `0.05 / 27`
 selection rule, recomputes **all selected step-2 fits**, and passes the **new
 step-2 results** into step 3. The bundle contains joint inputs only for the
@@ -77,13 +89,29 @@ estimator defaults are retained. Online data retrieval and the separate
 post-selection MVMR-cML analysis are outside this run.
 
 Allow tens of minutes, depending on the machine. Progress is printed for each
-exposure, and `results.rds` is checkpointed after each completed screen and
-stage. A new timestamped directory under `local-results/` contains `run.log`,
+exposure; `results.rds` is checkpointed after each serial screen or returned
+parallel batch, and after each stage. A new timestamped directory under `local-results/` contains `run.log`,
 `sessionInfo.txt`, `summary.txt`, `results.rds`, and CSV comparisons for all
 p-values, selection decisions, initial effects, invalid SNPs, final effects,
 SuSiE alpha values and PIPs. Checkpoints preserve completed work for inspection;
 rerunning the command starts a new run. `PASS` reports successful computation
 and final convergence; historical numerical differences are reported separately.
+
+The runner also saves individual warning messages in `warnings.csv` and
+counts in `warning-summary.csv`, with step-1 exposure IDs and later-stage
+labels. These are preserved on fitting errors. Warnings are captured without
+the usual first-50 limit and are flagged for review separately from execution
+status; a finite final result does not establish that every internal fit was
+well-conditioned.
+
+The serial full run completed on Apple Silicon macOS, R 4.3.2 and susieR
+0.12.35 on 2026-11-09: 2308.244 seconds total, including 2053.784 seconds in
+step 1 and 254.345 seconds in step 2. All 43 selected exposures and all 10
+invalid instruments matched the historical sets; step 3 converged in two
+outer updates. The original runner reported at least 50 warnings without
+retaining their individual text, so warning review remains open. The parallel
+runner needs a full native Mac benchmark; no speedup is assumed from the
+serial result alone.
 
 ### Optional online and post-selection workflows
 

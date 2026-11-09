@@ -19,5 +19,11 @@
   chain: all 249 screens, all selected step-2 fits, and step 3 using those new
   results. Save per-exposure checkpoints and historical comparison tables;
   stop if the new selection differs from the joint input available in the bundle.
-* Record the successful small-check run on Apple Silicon macOS with R 4.3.2
-  and susieR 0.12.35. This does not establish completion of the full Mac run.
+* Record successful small and full offline runs on Apple Silicon macOS with
+  R 4.3.2 and susieR 0.12.35. The full run retained the historical 43-exposure
+  selection and 10-invalid-instrument set, completing in 2308.244 seconds.
+  Its individual warning messages were not retained and remain to be reviewed.
+* Add optional `--workers=N` parallel step-1 fits with ordered collection and
+  the existing per-fit random seed. Keep the default serial and steps 2-3
+  unchanged. Capture warnings by exposure/stage and save a separate summary
+  without truncating them to the first 50 conditions.

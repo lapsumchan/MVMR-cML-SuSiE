@@ -1,5 +1,6 @@
 # Run from your existing MVMR-cML-SuSiE folder:
 # Rscript --vanilla offline-full.R
+# Optional parallel screens: Rscript --vanilla offline-full.R --workers=4
 # Or, in an updated checkout: Rscript --vanilla inst/scripts/offline-full.R
 # Uses the already installed package; no installation or online retrieval.
 if (dir.exists("local-library")) {
@@ -11,7 +12,59 @@ if (!requireNamespace("MVMRcMLSuSiE", quietly = TRUE)) {
 }
 library(MVMRcMLSuSiE)
 
-run_offline_full <- function(output_root = "local-results") {
+# Worker functions have only base environments: no log or socket connections
+# from the parent run are serialized into the separate R processes.
+.cml_step1_task <- function(job) {
+  MVMRcMLSuSiE::mvmr.cml.susie.step1(
+    sample.sizes = job$sample_sizes,
+    beta.exposure.ls = list(job$bx), se.exposure.ls = list(job$sx),
+    beta.outcome.ls = list(job$by), se.outcome.ls = list(job$sy),
+    use.openGWAS = FALSE)
+}
+environment(.cml_step1_task) <- baseenv()
+
+.cml_capture_task <- function(job, task_fun) {
+  warning_rows <- list()
+  error_message <- NULL
+  started <- proc.time()[["elapsed"]]
+  value <- NULL
+  console <- utils::capture.output({
+    value <- tryCatch(withCallingHandlers(task_fun(job), warning = function(w) {
+      warning_rows[[length(warning_rows) + 1L]] <<- data.frame(
+        stage = "step1", index = job$index, exposure = job$exposure,
+        message = conditionMessage(w),
+        call = if (is.null(conditionCall(w))) "" else paste(deparse(conditionCall(w)), collapse = " "),
+        class = paste(class(w), collapse = "/"), stringsAsFactors = FALSE)
+      invokeRestart("muffleWarning")
+    }), error = function(e) {
+      error_message <<- conditionMessage(e)
+      NULL
+    })
+  })
+  warning_table <- if (length(warning_rows)) do.call(rbind, warning_rows) else
+    data.frame(stage = character(), index = integer(), exposure = character(),
+               message = character(), call = character(), class = character())
+  list(index = job$index, exposure = job$exposure, value = value,
+       warnings = warning_table, error = error_message, console = console,
+       elapsed_seconds = proc.time()[["elapsed"]] - started)
+}
+environment(.cml_capture_task) <- baseenv()
+
+.cml_init_worker <- function(libpaths, rng_kind) {
+  .libPaths(libpaths)
+  do.call(RNGkind, as.list(rng_kind))
+  invisible(TRUE)
+}
+environment(.cml_init_worker) <- baseenv()
+
+run_offline_full <- function(output_root = "local-results", workers = 1L) {
+  if (!is.numeric(workers) || length(workers) != 1L || !is.finite(workers) ||
+      workers < 1 || workers != floor(workers) || workers > .Machine$integer.max) {
+    stop("workers must be a positive integer.", call. = FALSE)
+  }
+  workers <- as.integer(workers)
+  cluster <- NULL
+  on.exit(if (!is.null(cluster)) try(parallel::stopCluster(cluster), silent = TRUE), add = TRUE)
   output_dir <- file.path(output_root, paste0("MVMRcMLSuSiE-full-",
     format(Sys.time(), "%Y%m%d-%H%M%S"), "-", Sys.getpid()))
   if (!dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)) {
@@ -45,7 +98,7 @@ run_offline_full <- function(output_root = "local-results") {
   code_path <- system.file("R", "MVMRcMLSuSiE.rdb", package = "MVMRcMLSuSiE")
   results <- list(
     status = "RUNNING", completed_stage = "none", started = started,
-    output_dir = output_dir, runner_revision = "full-offline-v1",
+    output_dir = output_dir, runner_revision = "full-offline-v2",
     scope = paste("Recompute all 249 step-1 screens; select using p < 0.05/27;",
                   "recompute all selected step-2 fits from bundled joint inputs;",
                   "run step 3 using only these newly computed step-2 results."),
@@ -55,12 +108,37 @@ run_offline_full <- function(output_root = "local-results") {
     settings = list(screening_cutoff = 0.05 / 27, instrument_cutoff = 5e-8,
                     outcome_sample_size = 487511, seed = 1L,
                     MRcML_random_start = 100L, MRcML_random_seed = 1L,
-                    S = 10L, max.iter = 200L, tol = 1e-10, max.outer.iter = 200L),
+                    S = 10L, max.iter = 200L, tol = 1e-10, max.outer.iter = 200L,
+                    step1_workers = workers, step1_backend = if (workers > 1L) "PSOCK" else "serial"),
+    warnings = data.frame(stage = character(), index = integer(), exposure = character(),
+                          message = character(), call = character(), class = character()),
     installed_code_md5 = if (file.exists(code_path)) tools::md5sum(code_path) else NA,
     runner_md5 = if (length(script_path) == 1L && file.exists(script_path))
       tools::md5sum(script_path) else NA
   )
+  record_warnings <- function(warnings) {
+    if (nrow(warnings)) results$warnings <<- rbind(results$warnings, warnings)
+  }
+  capture_stage <- function(stage, expr) {
+    withCallingHandlers(expr, warning = function(w) {
+      record_warnings(data.frame(stage = stage, index = NA_integer_, exposure = NA_character_,
+        message = conditionMessage(w),
+        call = if (is.null(conditionCall(w))) "" else paste(deparse(conditionCall(w)), collapse = " "),
+        class = paste(class(w), collapse = "/"), stringsAsFactors = FALSE))
+      invokeRestart("muffleWarning")
+    })
+  }
   checkpoint <- function() {
+    results$warning_count <<- nrow(results$warnings)
+    results$warning_status <<- if (results$warning_count) "REVIEW_REQUIRED" else "NONE_CAPTURED"
+    write_csv(results$warnings, "warnings.csv")
+    warning_summary <- if (results$warning_count) {
+      table <- stats::aggregate(list(count = rep(1L, results$warning_count)),
+        results$warnings[c("stage", "message", "call", "class")], sum)
+      table[order(-table$count, table$stage, table$message), , drop = FALSE]
+    } else data.frame(stage = character(), message = character(), call = character(),
+                      class = character(), count = integer())
+    write_csv(warning_summary, "warning-summary.csv")
     saveRDS(results, file.path(output_dir, "results.rds"))
     flush(connection)
   }
@@ -70,6 +148,7 @@ run_offline_full <- function(output_root = "local-results") {
   cat("Host: ", Sys.info()[["sysname"]], " / ", Sys.info()[["machine"]], "\n", sep = "")
   cat("R: ", R.version.string, "\n", sep = "")
   cat("Scope: ", results$scope, "\n", sep = "")
+  cat("Step-1 workers: ", workers, " (", results$settings$step1_backend, ")\n", sep = "")
   cat("Results: ", output_dir, "\n", sep = "")
   print(results$packages)
   checkpoint()
@@ -118,25 +197,56 @@ run_offline_full <- function(output_root = "local-results") {
     results$rng_kind <- RNGkind()
 
     cat("\nSTEP 1: recomputing all 249 screens; this can take tens of minutes.\n")
-    cat("Each completed exposure is checkpointed in results.rds.\n")
+    cat("Completed results are checkpointed after each batch of up to ", workers,
+        " exposure(s); warnings are retained by exposure.\n", sep = "")
     tick <- proc.time()[["elapsed"]]
     p <- rep(NA_real_, length(ids))
-    for (j in seq_along(ids)) {
-      cat("Screen ", j, "/", length(ids), ": ", ids[j], " ...\n", sep = "")
+    if (workers > 1L) {
+      cluster <- capture_stage("worker_setup", parallel::makePSOCKcluster(
+        workers, rscript_args = "--vanilla", outfile = file.path(output_dir, "workers.log")))
+      capture_stage("worker_setup", parallel::clusterCall(
+        cluster, .cml_init_worker, .libPaths(), results$rng_kind))
+    }
+    for (start in seq.int(1L, length(ids), by = workers)) {
+      batch <- seq.int(start, min(start + workers - 1L, length(ids)))
+      cat("Screen batch ", min(batch), "-", max(batch), "/", length(ids), " ...\n", sep = "")
       flush(connection)
-      # Each package call already uses random_seed=1, so splitting the loop
-      # preserves its calculations while allowing per-exposure checkpoints.
-      p[j] <- MVMRcMLSuSiE::mvmr.cml.susie.step1(
-        sample.sizes = c(n[j], results$settings$outcome_sample_size),
-        beta.exposure.ls = dat$step1$beta.exposure.ls[j],
-        se.exposure.ls = dat$step1$se.exposure.ls[j],
-        beta.outcome.ls = dat$step1$beta.outcome.ls[j],
-        se.outcome.ls = dat$step1$se.outcome.ls[j], use.openGWAS = FALSE)
-      assert(length(p[j]) == 1L && is.finite(p[j]) && p[j] >= 0 && p[j] <= 1,
-             paste("Step 1 returned an invalid p-value for", ids[j]))
-      results$step1 <- list(p_values = setNames(p, ids), completed_exposures = j,
+      jobs <- lapply(batch, function(j) list(index = j, exposure = ids[j],
+        sample_sizes = c(n[j], results$settings$outcome_sample_size),
+        bx = dat$step1$beta.exposure.ls[[j]], sx = dat$step1$se.exposure.ls[[j]],
+        by = dat$step1$beta.outcome.ls[[j]], sy = dat$step1$se.outcome.ls[[j]]))
+      # The package sets random_seed=1 for every exposure. Workers use the
+      # parent's RNG kind; task order does not alter an exposure's seed.
+      answers <- if (is.null(cluster)) {
+        lapply(jobs, .cml_capture_task, task_fun = .cml_step1_task)
+      } else capture_stage("worker_dispatch", parallel::parLapply(
+        cluster, jobs, .cml_capture_task, task_fun = .cml_step1_task))
+      failures <- character()
+      for (answer in answers) {
+        j <- answer$index
+        record_warnings(answer$warnings)
+        if (is.null(answer$error) && (length(answer$value) != 1L ||
+            !is.finite(answer$value) || answer$value < 0 || answer$value > 1)) {
+          answer$error <- "Step 1 returned an invalid p-value."
+        }
+        if (is.null(answer$error)) {
+          p[j] <- answer$value
+          cat("Completed ", j, "/", length(ids), ": ", ids[j], " (",
+              round(answer$elapsed_seconds, 3), " s; ", nrow(answer$warnings), " warnings).\n", sep = "")
+        } else {
+          failures <- c(failures, paste(ids[j], answer$error, sep = ": "))
+          if (length(answer$console)) cat(paste(answer$console, collapse = "\n"), "\n")
+        }
+      }
+      results$step1 <- list(p_values = setNames(p, ids), completed_exposures = sum(is.finite(p)),
+                            errors = failures,
                             elapsed_seconds = proc.time()[["elapsed"]] - tick)
       checkpoint()
+      assert(!length(failures), paste("Step-1 task failed:", paste(failures, collapse = "; ")))
+    }
+    if (!is.null(cluster)) {
+      parallel::stopCluster(cluster)
+      cluster <- NULL
     }
     assert(length(p) == length(ids) && all(is.finite(p)) && all(p >= 0 & p <= 1),
            "Step 1 did not return 249 finite probabilities.")
@@ -171,14 +281,14 @@ run_offline_full <- function(output_root = "local-results") {
     cat("\nSTEP 2: recomputing all ", length(selected_ids), " selected fits on all ",
         length(snp_ids), " joint-input rows.\n", sep = "")
     tick <- proc.time()[["elapsed"]]
-    step2 <- MVMRcMLSuSiE::mvmr.cml.susie.step2(
+    step2 <- capture_stage("step2", MVMRcMLSuSiE::mvmr.cml.susie.step2(
       sample.sizes.subset = c(n[selected_ids], results$settings$outcome_sample_size),
       beta.exposure.mat = raw$beta.exposure.mat[, selected_ids, drop = FALSE],
       se.exposure.mat = raw$se.exposure.mat[, selected_ids, drop = FALSE],
       beta.outcome.vec = raw$beta.outcome.vec, se.outcome.vec = raw$se.outcome.vec,
       pval.exposure.mat = raw$pval.exposure.mat[, selected_ids, drop = FALSE],
       use.openGWAS = FALSE, cutoff = results$settings$instrument_cutoff
-    )
+    ))
     assert(length(step2$theta.vec) == length(selected_ids) && all(is.finite(step2$theta.vec)),
            "Step 2 returned malformed initial effects.")
     results$step2 <- list(result = step2, elapsed_seconds = proc.time()[["elapsed"]] - tick)
@@ -203,10 +313,10 @@ run_offline_full <- function(output_root = "local-results") {
     dimnames(rho) <- list(c(selected_ids, "outcome_AD"), c(selected_ids, "outcome_AD"))
     rho[selected_ids, selected_ids] <- dat$step3$metdrho[selected_ids, selected_ids, drop = FALSE]
     tick <- proc.time()[["elapsed"]]
-    fit <- MVMRcMLSuSiE::mvmr.cml.susie.step3(
+    fit <- capture_stage("step3", MVMRcMLSuSiE::mvmr.cml.susie.step3(
       step2$mvdat, step2$invalid.idx, step2$theta.vec, rho,
       S = results$settings$S, max.iter = results$settings$max.iter,
-      tol = results$settings$tol, max.outer.iter = results$settings$max.outer.iter)
+      tol = results$settings$tol, max.outer.iter = results$settings$max.outer.iter))
     convergence <- attr(fit, "cml.convergence")
     assert(isTRUE(convergence$outer.converged) && isTRUE(convergence$inner.converged),
            "Step 3 did not confirm both outer and final inner convergence.")
@@ -257,17 +367,26 @@ run_offline_full <- function(output_root = "local-results") {
   writeLines(capture.output(print(results$session)), file.path(output_dir, "sessionInfo.txt"))
   checkpoint()
   summary <- c(paste("Overall status:", results$status),
+               paste("Captured warnings:", results$warning_count),
+               paste("Warning review:", results$warning_status),
                paste("Last completed stage:", results$completed_stage),
                paste("Total elapsed seconds:", round(results$total_elapsed_seconds, 3)),
                capture.output(print(results$comparison)),
                if (!is.null(results$error)) paste("Error:", results$error),
+               if (results$warning_count) "Inspect warnings.csv and warning-summary.csv before interpreting the warnings.",
                paste("Saved logs, results and comparison CSV files in:", output_dir))
   writeLines(summary, file.path(output_dir, "summary.txt"))
   cat("\n", paste(summary, collapse = "\n"), "\n", sep = "")
   invisible(results)
 }
 
-.cml_full_result <- run_offline_full()
+.cml_args <- commandArgs(trailingOnly = TRUE)
+if (length(.cml_args) > 1L ||
+    (length(.cml_args) == 1L && !grepl("^--workers=[1-9][0-9]*$", .cml_args))) {
+  stop("Usage: Rscript --vanilla offline-full.R [--workers=4]", call. = FALSE)
+}
+.cml_workers <- if (length(.cml_args)) as.numeric(sub("^--workers=", "", .cml_args)) else 1L
+.cml_full_result <- run_offline_full(workers = .cml_workers)
 if (!identical(.cml_full_result$status, "PASS")) {
   stop("Complete offline run stopped. See ", file.path(.cml_full_result$output_dir, "run.log"),
        call. = FALSE)
