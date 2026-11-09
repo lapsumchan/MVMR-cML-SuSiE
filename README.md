@@ -48,8 +48,42 @@ post-selection MVMR-cML analysis. It retains the original example's
 
 Outputs are written to a new directory under `local-results/`: a readable
 log, package/session information, and an RDS result. Keep the log if anything
-fails. Mac compatibility is confirmed only when this run succeeds on your
-Mac; the development verification in this repository was performed on Linux.
+fails. The small check has passed on Linux (R 4.5.0; susieR 0.12.35 and
+0.14.2) and on Apple Silicon macOS (R 4.3.2; susieR 0.12.35).
+
+### Complete offline pipeline
+
+After the small check passes, run the full runner from the repository folder:
+
+```sh
+Rscript --vanilla inst/scripts/offline-full.R
+```
+
+It automatically uses the existing `local-library/`; it does not install or
+download anything. If you have the earlier downloaded repository, save the
+new `offline-full.R` file into that existing folder and run:
+
+```sh
+Rscript --vanilla offline-full.R
+```
+
+This recomputes **all 249 step-1 screens**, applies the original `0.05 / 27`
+selection rule, recomputes **all selected step-2 fits**, and passes the **new
+step-2 results** into step 3. The bundle contains joint inputs only for the
+original 43 selected exposures; a different new selection is saved and
+reported as a stop, without substituting historical selection decisions.
+The supplied harmonized data, sample sizes, covariance construction and
+estimator defaults are retained. Online data retrieval and the separate
+post-selection MVMR-cML analysis are outside this run.
+
+Allow tens of minutes, depending on the machine. Progress is printed for each
+exposure, and `results.rds` is checkpointed after each completed screen and
+stage. A new timestamped directory under `local-results/` contains `run.log`,
+`sessionInfo.txt`, `summary.txt`, `results.rds`, and CSV comparisons for all
+p-values, selection decisions, initial effects, invalid SNPs, final effects,
+SuSiE alpha values and PIPs. Checkpoints preserve completed work for inspection;
+rerunning the command starts a new run. `PASS` reports successful computation
+and final convergence; historical numerical differences are reported separately.
 
 ### Optional online and post-selection workflows
 

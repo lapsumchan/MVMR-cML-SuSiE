@@ -15,3 +15,9 @@
 * Add a small offline runner using bundled data and focused regression tests.
   This is a runtime repair, not a new scientific validation or a full rerun
   of all 249 exposure screens.
+* Add `inst/scripts/offline-full.R` to recompute the complete bundled offline
+  chain: all 249 screens, all selected step-2 fits, and step 3 using those new
+  results. Save per-exposure checkpoints and historical comparison tables;
+  stop if the new selection differs from the joint input available in the bundle.
+* Record the successful small-check run on Apple Silicon macOS with R 4.3.2
+  and susieR 0.12.35. This does not establish completion of the full Mac run.
