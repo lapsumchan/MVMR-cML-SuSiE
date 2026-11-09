@@ -11,7 +11,8 @@ mvmr.cml.susie.step3(
   rho.mat,
   S = 10,
   max.iter = 200,
-  tol = 1e-10
+  tol = 1e-10,
+  max.outer.iter = 200
 )
 }
 \arguments{
@@ -26,13 +27,17 @@ the number of exposures. The last row/column corresponds to the outcome}
 
 \item{S}{The number of single effects (signal clusters) in SuSiE. Default is 10.}
 
-\item{max.iter}{The maximum number of iterations for SuSiE. Default is 200.}
+\item{max.iter}{The maximum number of iterations for each inner SuSiE fit. Default is 200.}
 
 \item{tol}{A numeric value indicating the convergence threshold for the iterative procedure. Default is \eqn{1 \times 10^{-10}}.}
+
+\item{max.outer.iter}{Maximum number of outer reweighting updates. Default is 200.
+An error is raised if the coefficient-change criterion is not met within this limit.}
 }
 \value{
 A fitted \code{susie} object. The key SuSiE output is the posterior inclusion probability (PIP) matrix \code{alpha}
-used for determining signal clusters
+used for determining signal clusters. The \code{cml.convergence} attribute records
+the outer iteration count, final squared coefficient change, and inner convergence status.
 }
 \description{
 This function performs the iterative SuSiE algorithm to identify potential exposure signal clusters

@@ -1,13 +1,23 @@
 Package: MVMRcMLSuSiE
 Title: Implementation of MVMR-cML-SuSiE
-Version: 0.1.0
+Version: 0.1.0.9001
 Author: Lap Sum Chan
 Maintainer: Lap Sum Chan <chan2429@umn.edu>
-Description: Implements the first three steps of constrained Maximum Likelihood (cML) based Mendelian randomization approach for highly correlated exposures
+Description: Implements the first three steps of the constrained maximum likelihood
+    (cML) based Mendelian randomization approach for highly correlated exposures.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
-Imports: 
+Depends:
+    R (>= 4.3.0)
+Imports:
+    MRcML,
+    stats,
     susieR
+Suggests:
+    TwoSampleMR
+Remotes:
+    xue-hr/MRcML@58a3481976093175cbb82a5e6bf06c10e3c576f2,
+    MRCIEU/TwoSampleMR

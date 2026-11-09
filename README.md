@@ -11,24 +11,59 @@ The package has been tested on Microsoft's Windows 10 operating system and Linux
 
 Before using `MVMRcMLSuSiE` package, users should have `R` version 4.3.0 or higher, and several packages installed.
 
-### Installation  
+### First local run (Mac or another R installation)
 
-First, install `MVMRcMLSuSiE` from GitHub using `devtools`:  
+Start with the bundled offline check. It uses **MRcML and susieR**; neither
+OpenGWAS credentials nor TwoSampleMR/MVMRcML is needed for this first run.
+The package declares its required dependencies and pins the MRcML source
+revision. Use R 4.3.0 or newer. On macOS, use the R build for your machine
+(Apple Silicon or Intel); CRAN normally supplies binary dependencies.
 
-    # Install devtools if not already installed
-    # install.packages("devtools") 
-    devtools::install_github("lapsumchan/MVMR-cML-SuSiE")
-    
-Next, install the necessary dependencies [`TwoSampleMR`](https://mrcieu.github.io/TwoSampleMR/), [`MRcML`](https://github.com/xue-hr/MRcML) and [`MVMRcML`](https://github.com/ZhaotongL/MVMR-cML):  
+From a downloaded or cloned copy of this development branch, open Terminal
+in the repository directory and run:
 
-    install.packages("remotes")
-    remotes::install_github("MRCIEU/TwoSampleMR")
+```sh
+Rscript --vanilla scripts/install-local.R
+```
 
-    install.packages("devtools")
-    devtools::install_github("xue-hr/MRcML")
-    devtools::install_github("ZhaotongL/MVMR-cML")
-    
-which should install within a couple of minutes on a standard machine. Please refer to the above hyperlinked Github pages for help if the corresponding `R` packages cannot be installed properly.
+This installs into `local-library/` under the repository, then executes the
+bundled check. Subsequent runs need no installation or network access:
+
+```sh
+R_LIBS_USER="$PWD/local-library" Rscript --vanilla inst/scripts/offline-smoke.R
+```
+
+If the package is already installed in your R library, run this in a **fresh
+R session**:
+
+```r
+source(system.file("scripts", "offline-smoke.R", package = "MVMRcMLSuSiE"))
+```
+
+The runner verifies exposure identities, exercises steps 1 and 2 on one
+bundled exposure each, and **recomputes step 3 for all 43 selected exposures
+from the saved step-2 output**. It does not rerun all 249 screens or the
+post-selection MVMR-cML analysis. It retains the original example's
+`0.05 / 27` screening rule and numerical defaults.
+
+Outputs are written to a new directory under `local-results/`: a readable
+log, package/session information, and an RDS result. Keep the log if anything
+fails. Mac compatibility is confirmed only when this run succeeds on your
+Mac; the development verification in this repository was performed on Linux.
+
+### Optional online and post-selection workflows
+
+The longer demonstration below uses online retrieval and a later MVMR-cML
+analysis. For those additional steps, install:
+
+```r
+install.packages("remotes")
+remotes::install_github("MRCIEU/TwoSampleMR", upgrade = "never")
+remotes::install_github("ZhaotongL/MVMR-cML", upgrade = "never")
+```
+
+Online retrieval depends on the current OpenGWAS service and authentication.
+The initial offline check does not call that service.
 
 # Demo
 
@@ -258,8 +293,8 @@ and in this case, `L.star = 43`. The users will then need to provide a joint set
 ```
 beta.exposure.mat <- example.dat$step2$beta.exposure.mat
 se.exposure.mat <- example.dat$step2$se.exposure.mat
-beta.outcome.vec <- example.dat$step2$beta.outcome.mat
-se.outcome.vec <- example.dat$step2$se.outcome.mat
+beta.outcome.vec <- example.dat$step2$beta.outcome.vec
+se.outcome.vec <- example.dat$step2$se.outcome.vec
 pval.exposure.mat <- example.dat$step2$pval.exposure.mat
 ```
 which upon running

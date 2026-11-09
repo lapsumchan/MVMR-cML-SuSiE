@@ -60,3 +60,4 @@
 #' # Examine step 3 SuSiE object
 #' str(example.dat$step3$step3res)
 #' }
+"example.dat"
